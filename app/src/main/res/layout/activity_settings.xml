@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -10,12 +11,11 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#FFFFFF"
+        android:background="@color/white"
         android:orientation="vertical"
-        android:paddingHorizontal="16dp"
-        >
+        android:paddingHorizontal="@dimen/padding_horizontal">
 
-        <FrameLayout
+        <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="56dp">
 
@@ -28,69 +28,52 @@
                 android:text="@string/settings_label"
                 android:textColor="@color/black"
                 android:textSize="26sp" />
-        </FrameLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:paddingTop="24dp" >
+        </androidx.appcompat.widget.Toolbar>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="61dp"
-            android:orientation="horizontal"
-            >
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingTop="24dp">
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/settings_text_height"
+                android:textSize="@dimen/settings_text_size"
+                android:text="@string/dark_theme_label"
+                />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:text="@string/dark_theme_label"
-                android:textColor="@color/black"
-                android:textSize="16sp" />
-
-            <Switch
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center" />
+                android:layout_height="@dimen/settings_text_height"
+                android:drawableEnd="@drawable/link"
+                android:gravity="center_vertical"
+                android:text="@string/share_label"
+                android:textColor="@color/black"
+                android:textSize="@dimen/settings_text_size" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/settings_text_height"
+                android:drawableEnd="@drawable/help"
+                android:gravity="center_vertical"
+                android:text="@string/support_label"
+                android:textColor="@color/black"
+                android:textSize="@dimen/settings_text_size" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/settings_text_height"
+                android:drawableEnd="@drawable/arrow_forward"
+                android:gravity="center_vertical"
+                android:text="@string/user_agreement_label"
+                android:textColor="@color/black"
+                android:textSize="@dimen/settings_text_size" />
 
         </LinearLayout>
 
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="61dp"
-            android:gravity="center_vertical"
-            android:drawableEnd="@drawable/link"
-            android:text="@string/share_label"
-            android:textColor="@color/black"
-            android:textSize="16sp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="61dp"
-            android:gravity="center_vertical"
-            android:drawableEnd="@drawable/help"
-            android:text="@string/support_label"
-            android:textColor="@color/black"
-            android:textSize="16sp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="61dp"
-            android:gravity="center_vertical"
-            android:drawableEnd="@drawable/arrow_forward"
-            android:text="@string/user_agreement_label"
-            android:textColor="@color/black"
-            android:textSize="16sp" />
-
-
     </LinearLayout>
-
-
-    </LinearLayout>
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

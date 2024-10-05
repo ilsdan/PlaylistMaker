@@ -10,9 +10,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/blau"
+        android:background="@color/blue"
         android:orientation="vertical"
-        android:paddingHorizontal="16dp"
+        android:paddingHorizontal="@dimen/padding_horizontal"
         >
 
         <FrameLayout
@@ -43,12 +43,12 @@
                 android:backgroundTint="@color/white"
                 app:icon="@drawable/loupe"
                 android:text="@string/search_label"
-                app:iconTint="@color/grau"
+                app:iconTint="@color/gray"
                 app:iconGravity="textStart"
-                app:iconPadding="10dp"
+                app:iconPadding="@dimen/main_button_icon_padding"
                 android:textAllCaps="false"
-                android:textColor="@color/grau"
-                app:cornerRadius="16dp" />
+                android:textColor="@color/gray"
+                app:cornerRadius="@dimen/main_button_corner_radius" />
 
             <Button
                 android:id="@+id/medialibrary_button"
@@ -59,12 +59,12 @@
                 android:backgroundTint="@color/white"
                 app:icon="@drawable/note"
                 android:text="@string/medialibrary_label"
-                app:iconTint="@color/grau"
+                app:iconTint="@color/gray"
                 app:iconGravity="textStart"
-                app:iconPadding="10dp"
+                app:iconPadding="@dimen/main_button_icon_padding"
                 android:textAllCaps="false"
-                android:textColor="@color/grau"
-                app:cornerRadius="16dp" />
+                android:textColor="@color/gray"
+                app:cornerRadius="@dimen/main_button_corner_radius" />
 
             <Button
                 android:id="@+id/settings_button"
@@ -75,12 +75,12 @@
                 android:backgroundTint="@color/white"
                 app:icon="@drawable/gear"
                 android:text="@string/settings_label"
-                app:iconTint="@color/grau"
+                app:iconTint="@color/gray"
                 app:iconGravity="textStart"
-                app:iconPadding="10dp"
+                app:iconPadding="@dimen/main_button_icon_padding"
                 android:textAllCaps="false"
-                android:textColor="@color/grau"
-                app:cornerRadius="16dp" />
+                android:textColor="@color/gray"
+                app:cornerRadius="@dimen/main_button_corner_radius" />
 
         </LinearLayout>
 
