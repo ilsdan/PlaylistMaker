@@ -36,16 +36,19 @@
         android:textSize="@dimen/settings_text_size" />
 
     <TextView
+        android:id="@+id/share_app_list_button"
         android:text="@string/share_label"
         app:drawableEndCompat="@drawable/link"
         style="@style/SettingsListItemStyle" />
 
     <TextView
+        android:id="@+id/write_to_support_list_button"
         android:text="@string/support_label"
         app:drawableEndCompat="@drawable/help"
         style="@style/SettingsListItemStyle" />
 
     <TextView
+        android:id="@+id/user_agreement_list_button"
         android:text="@string/user_agreement_label"
         app:drawableEndCompat="@drawable/arrow_forward"
         style="@style/SettingsListItemStyle"/>
