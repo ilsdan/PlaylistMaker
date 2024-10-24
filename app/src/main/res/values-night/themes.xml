@@ -5,5 +5,7 @@
         <item name="colorPrimary">@color/gray</item>
         <item name="colorOnPrimary">@color/white</item>
         <item name="colorOnPrimaryFixedVariant">@color/white</item>
+        <item name="colorBackgroundFloating">@color/white</item>
+        <item name="colorOnBackground">@color/gray</item>
     </style>
 </resources>

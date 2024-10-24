@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -12,20 +13,12 @@
     >
 
     <androidx.appcompat.widget.Toolbar
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginBottom="24dp">
-
+        android:id="@+id/toolbar"
+        style="@style/ToolbarStyle"
+        app:title=" ">
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-
-            android:text="@string/settings_label"
-            android:fontFamily="@font/ys_display_medium"
-            android:textFontWeight="500"
-            android:textColor="?attr/colorOnPrimaryFixedVariant"
-            android:textSize="26sp" />
+            style="@style/ToolbarTitleStyle"
+            android:text="@string/settings_label" />
     </androidx.appcompat.widget.Toolbar>
 
     <com.google.android.material.switchmaterial.SwitchMaterial
