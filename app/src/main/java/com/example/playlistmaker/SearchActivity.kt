@@ -40,6 +40,8 @@ class SearchActivity : AppCompatActivity() {
         val searchEditText = findViewById<EditText>(R.id.searchEditText)
         val clearButton = findViewById<ImageView>(R.id.clearSearchEditText)
 
+        searchEditText.setText(searchEditTextValue)
+
         clearButton.setOnClickListener {
             searchEditText.setText("")
         }
