@@ -47,7 +47,7 @@ class SettingsActivity : AppCompatActivity() {
             val message = getString(R.string.message)
             val writeIntent = Intent(Intent.ACTION_SENDTO)
             writeIntent.data = Uri.parse("mailto:")
-            writeIntent.putExtra(Intent.EXTRA_EMAIL, email)
+            writeIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
             writeIntent.putExtra(Intent.EXTRA_SUBJECT, subject)
             writeIntent.putExtra(Intent.EXTRA_TEXT, message)
             startActivity(writeIntent)
