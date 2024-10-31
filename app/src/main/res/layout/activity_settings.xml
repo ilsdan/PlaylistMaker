@@ -1,28 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="?attr/colorPrimary"
     android:orientation="vertical"
-    tools:context=".SettingsActivity">
+    tools:context=".SettingsActivity"
+    android:theme="@style/Base.Theme.PlaylistMaker"
+    >
 
     <androidx.appcompat.widget.Toolbar
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginBottom="24dp">
-
+        android:id="@+id/toolbar"
+        style="@style/ToolbarStyle"
+        app:title=" ">
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:drawableStart="@drawable/arrow_back"
-            android:drawablePadding="12dp"
-            android:text="@string/settings_label"
-            android:textColor="@color/black"
-            android:textSize="26sp" />
+            style="@style/ToolbarTitleStyle"
+            android:text="@string/settings_label" />
     </androidx.appcompat.widget.Toolbar>
 
     <com.google.android.material.switchmaterial.SwitchMaterial
@@ -33,33 +29,21 @@
         android:textSize="@dimen/settings_text_size" />
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_text_height"
-        android:drawableEnd="@drawable/link"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="@dimen/padding_horizontal"
+        android:id="@+id/share_app_list_button"
         android:text="@string/share_label"
-        android:textColor="@color/black"
-        android:textSize="@dimen/settings_text_size" />
+        app:drawableEndCompat="@drawable/link"
+        style="@style/SettingsListItemStyle" />
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_text_height"
-        android:drawableEnd="@drawable/help"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="@dimen/padding_horizontal"
+        android:id="@+id/write_to_support_list_button"
         android:text="@string/support_label"
-        android:textColor="@color/black"
-        android:textSize="@dimen/settings_text_size" />
+        app:drawableEndCompat="@drawable/help"
+        style="@style/SettingsListItemStyle" />
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_text_height"
-        android:drawableEnd="@drawable/arrow_forward"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="@dimen/padding_horizontal"
+        android:id="@+id/user_agreement_list_button"
         android:text="@string/user_agreement_label"
-        android:textColor="@color/black"
-        android:textSize="@dimen/settings_text_size" />
+        app:drawableEndCompat="@drawable/arrow_forward"
+        style="@style/SettingsListItemStyle"/>
 
 </LinearLayout>
