@@ -26,7 +26,7 @@
         android:layout_height="@dimen/settings_text_height"
         android:paddingHorizontal="@dimen/padding_horizontal"
         android:text="@string/dark_theme_label"
-        android:textSize="@dimen/settings_text_size" />
+        android:textSize="@dimen/medium_text_size" />
 
     <TextView
         android:id="@+id/share_app_list_button"

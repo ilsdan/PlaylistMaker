@@ -7,5 +7,6 @@
         <item name="colorOnPrimaryFixedVariant">@color/white</item>
         <item name="colorBackgroundFloating">@color/white</item>
         <item name="colorOnBackground">@color/gray</item>
+        <item name="colorOnContainer">@color/white</item>
     </style>
 </resources>

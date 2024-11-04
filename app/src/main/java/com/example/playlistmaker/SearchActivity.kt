@@ -14,9 +14,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 class SearchActivity : AppCompatActivity() {
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,6 +69,12 @@ class SearchActivity : AppCompatActivity() {
             }
         }
         searchEditText.addTextChangedListener(simpleTextWatcher)
+
+        val trackListView = findViewById<RecyclerView>(R.id.tracksList)
+        trackListView.layoutManager = LinearLayoutManager(this)
+
+        val trackAdapter = TrackAdapter(TracksList.getTracks())
+        trackListView.adapter = trackAdapter
 
     }
 
