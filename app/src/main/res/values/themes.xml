@@ -6,6 +6,7 @@
         <item name="colorOnPrimaryFixedVariant">@color/gray</item>
         <item name="colorBackgroundFloating">@color/light_gray</item>
         <item name="colorOnBackground">@color/dark_gray</item>
+        <item name="colorOnContainer">@color/dark_gray</item>
     </style>
     <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker" />
 </resources>
