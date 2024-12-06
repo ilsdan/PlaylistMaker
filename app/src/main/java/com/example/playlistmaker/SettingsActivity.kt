@@ -3,14 +3,20 @@ package com.example.playlistmaker
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.widget.EditText
+import android.widget.Switch
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
+
+    private lateinit var darkModeSwitch: SwitchMaterial
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -29,6 +35,8 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+
+        darkModeSwitch = findViewById<SwitchMaterial>(R.id.darkModeSwitch)
 
         val shareAppListButton = findViewById<TextView>(R.id.share_app_list_button)
         shareAppListButton.setOnClickListener {

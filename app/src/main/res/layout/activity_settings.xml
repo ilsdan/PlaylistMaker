@@ -22,11 +22,15 @@
     </androidx.appcompat.widget.Toolbar>
 
     <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/darkModeSwitch"
         android:layout_width="match_parent"
         android:layout_height="@dimen/settings_text_height"
         android:paddingHorizontal="@dimen/padding_horizontal"
         android:text="@string/dark_theme_label"
-        android:textSize="@dimen/medium_text_size" />
+        android:textSize="@dimen/medium_text_size"
+        app:trackTint="@drawable/track_switch_background"
+        app:thumbTint="@drawable/thumb_switch_background"
+        />
 
     <TextView
         android:id="@+id/share_app_list_button"
