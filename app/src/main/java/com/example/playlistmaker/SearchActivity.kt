@@ -70,6 +70,7 @@ class SearchActivity : AppCompatActivity() {
             searchEditText.setText("")
             trackList.clear()
             trackAdapter.notifyDataSetChanged()
+            hideError()
         }
 
         val simpleTextWatcher = object : TextWatcher {
@@ -84,6 +85,7 @@ class SearchActivity : AppCompatActivity() {
                     clearButton.visibility = View.GONE
                     val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
                     inputMethodManager?.hideSoftInputFromWindow(searchEditText.windowToken, 0)
+                    hideError()
                 } else {
                     clearButton.visibility = View.VISIBLE
                 }
@@ -141,6 +143,10 @@ class SearchActivity : AppCompatActivity() {
         errorImage.setImageDrawable(getDrawable(icon))
         errorText.text = text
         updateButton.isVisible = showUpdateButton
+    }
+
+    private fun hideError() {
+        errorView.isVisible = false
     }
 
     private fun showTrackList(trackList: List<Track>) {
