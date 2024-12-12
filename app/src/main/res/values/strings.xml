@@ -13,4 +13,6 @@
     <string name="message">Спасибо разработчикам и разработчицам за крутое приложение!</string>
     <string name="agreement_link">https://yandex.ru/legal/practicum_offer/</string>
     <string name="update_text">Обновить</string>
+    <string name="search_history">Вы искали</string>
+    <string name="clear_search_history">Очистить историю</string>
 </resources>
