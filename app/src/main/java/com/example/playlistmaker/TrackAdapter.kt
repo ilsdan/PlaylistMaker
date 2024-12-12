@@ -4,7 +4,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-class TrackAdapter(private val tracks: List<Track>) : RecyclerView.Adapter<TrackViewHolder>() {
+interface OnItemClickListener {
+    fun onItemClick(item: Track)
+}
+
+class TrackAdapter(private val tracks: List<Track>, private val onItemClickListener: OnItemClickListener) : RecyclerView.Adapter<TrackViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
         val binding =
@@ -14,6 +18,7 @@ class TrackAdapter(private val tracks: List<Track>) : RecyclerView.Adapter<Track
 
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
         holder.bind(tracks[position])
+        holder.itemView.setOnClickListener { onItemClickListener.onItemClick(tracks[holder.adapterPosition]) }
     }
 
     override fun getItemCount(): Int {

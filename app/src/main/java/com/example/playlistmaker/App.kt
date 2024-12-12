@@ -3,15 +3,15 @@ package com.example.playlistmaker
 import android.app.Application
 import android.content.res.Configuration
 import android.content.res.Resources
-import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 
 const val PLAYLIST_MAKER_PREFERENCES = "playlist_maker_preferences"
 const val THEME_SWITCHER_KEY = "theme_switcher_key"
+const val HISTORY_KEY = "search_history"
 
 class App : Application() {
 
-    var darkTheme = false
+    private var darkTheme = false
 
     private fun isSystemDarkMode(): Boolean {
         val configuration = Resources.getSystem().configuration
