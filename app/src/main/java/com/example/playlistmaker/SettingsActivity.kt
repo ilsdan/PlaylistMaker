@@ -15,7 +15,19 @@ import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
 
-    private lateinit var darkModeSwitch: SwitchMaterial
+    private lateinit var themeSwitcher: SwitchMaterial
+
+    private fun themeSwitcherCreate() {
+
+        val sharedPrefs = getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE)
+        val isDarkTheme = sharedPrefs.getBoolean(THEME_SWITCHER_KEY, false)
+        themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
+        themeSwitcher.isChecked = isDarkTheme
+        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
+            (applicationContext as App).switchTheme(checked)
+        }
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,7 +48,7 @@ class SettingsActivity : AppCompatActivity() {
             finish()
         }
 
-        darkModeSwitch = findViewById<SwitchMaterial>(R.id.darkModeSwitch)
+        themeSwitcherCreate()
 
         val shareAppListButton = findViewById<TextView>(R.id.share_app_list_button)
         shareAppListButton.setOnClickListener {
