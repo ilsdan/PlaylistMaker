@@ -12,8 +12,6 @@ import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.gson.Gson
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 class AudioPlayerActivity : AppCompatActivity() {
@@ -42,7 +40,8 @@ class AudioPlayerActivity : AppCompatActivity() {
     private fun toolbarCreate() {
         toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        getSupportActionBar()?.setDisplayShowTitleEnabled(false)
+
         toolbar.setNavigationOnClickListener {
             super.onBackPressed()
             finish()
@@ -55,7 +54,7 @@ class AudioPlayerActivity : AppCompatActivity() {
             .placeholder(R.drawable.track_placeholder)
             .fitCenter()
             .centerCrop()
-            .transform(RoundedCorners(8))
+            .transform((RoundedCorners(resources.getDimensionPixelSize(R.dimen.cover_rounded_corners_radius))))
             .into(cover)
 
         trackName = findViewById<TextView>(R.id.trackName)
