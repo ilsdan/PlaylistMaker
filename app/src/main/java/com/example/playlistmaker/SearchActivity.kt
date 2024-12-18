@@ -5,11 +5,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.AdapterView
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -132,12 +130,19 @@ class SearchActivity : AppCompatActivity() {
                     trackList.addAll(getTrackHistory())
                     trackAdapter.notifyDataSetChanged()
                 }
+                openAudioPlayer(item)
             }
         }
 
         trackAdapter = TrackAdapter(trackList, onItemClickListener)
 
         trackListView.adapter = trackAdapter
+    }
+
+    private fun openAudioPlayer(track: Track) {
+        val displayIntent = Intent(this, AudioPlayerActivity::class.java)
+        displayIntent.putExtra("track", Gson().toJson(track))
+        startActivity(displayIntent)
     }
 
     private fun errorViewCreate() {
