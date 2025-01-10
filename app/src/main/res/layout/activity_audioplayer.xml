@@ -82,7 +82,20 @@
             app:layout_constraintTop_toBottomOf="@id/artistName"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:srcCompat="@drawable/pause_button" />
+            app:srcCompat="@drawable/pause_button"
+            android:visibility="gone"
+            />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="30dp"
+            android:indeterminateTint="@color/blue"
+            app:layout_constraintTop_toBottomOf="@id/artistName"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:visibility="visible"/>
 
         <ImageView
             android:id="@+id/collectionButton"
@@ -107,11 +120,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            app:layout_constraintTop_toBottomOf="@+id/playPauseButton"
+            app:layout_constraintTop_toBottomOf="@+id/collectionButton"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             tools:text="0:30"
-            android:text="0:30"
+
             android:fontFamily="@font/ys_display_medium"
             android:textFontWeight="500"
             android:textSize="14sp"

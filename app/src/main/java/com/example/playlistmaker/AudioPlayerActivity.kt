@@ -1,14 +1,20 @@
 package com.example.playlistmaker
 
 import android.icu.text.SimpleDateFormat
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.gson.Gson
@@ -23,19 +29,87 @@ class AudioPlayerActivity : AppCompatActivity() {
     private  lateinit var collectionName: TextView
     private  lateinit var releaseDate: TextView
     private  lateinit var primaryGenreName: TextView
-    private  lateinit var country: TextView
+    private lateinit var country: TextView
 
+    private lateinit var currentTrackTime: TextView
 
     private lateinit var playButton: ImageView
     private lateinit var collectionButton: ImageView
     private lateinit var likeButton: ImageView
-    private var play = true
+    private lateinit var progressBar: ProgressBar
+
     private var like = false
     private var inCollection = false
 
     private lateinit var track: Track
 
     private lateinit var toolbar: Toolbar
+
+    private var mediaPlayer = MediaPlayer()
+
+    private val handler = Handler(Looper.getMainLooper())
+
+    companion object {
+        private const val STATE_DEFAULT = 0
+        private const val STATE_PREPARED = 1
+        private const val STATE_PLAYING = 2
+        private const val STATE_PAUSED = 3
+    }
+
+    private var playerState = STATE_DEFAULT
+
+    private val timer = object : Runnable {
+        override fun run() {
+            if (playerState == STATE_PLAYING) {
+                currentTrackTime.text = SimpleDateFormat("m:ss", Locale.getDefault()).format(mediaPlayer.currentPosition)
+                handler.postDelayed(this, 100)
+            }
+        }
+    }
+
+    private fun preparePlayer(url: String) {
+        Log.i("track", url)
+        mediaPlayer.setDataSource(url)
+        mediaPlayer.prepareAsync()
+        mediaPlayer.setOnPreparedListener {
+            progressBar.isVisible = false
+            playButton.isVisible = true
+            currentTrackTime.text = "0:00"
+            playButton.setImageDrawable(getDrawable(R.drawable.play_button))
+            playerState = STATE_PREPARED
+        }
+        mediaPlayer.setOnCompletionListener {
+            playButton.setImageDrawable(getDrawable(R.drawable.play_button))
+            playerState = STATE_PREPARED
+            currentTrackTime.text = "0:00"
+            handler.removeCallbacks(timer)
+        }
+    }
+
+    private fun startPlayer() {
+        mediaPlayer.start()
+        playButton.setImageDrawable(getDrawable(R.drawable.pause_button))
+        playerState = STATE_PLAYING
+        handler.post(timer)
+    }
+
+    private fun pausePlayer() {
+        mediaPlayer.pause()
+        playButton.setImageDrawable(getDrawable(R.drawable.play_button))
+        playerState = STATE_PAUSED
+        handler.removeCallbacks(timer)
+    }
+
+    private fun playbackControl() {
+        when(playerState) {
+            STATE_PLAYING -> {
+                pausePlayer()
+            }
+            STATE_PREPARED, STATE_PAUSED -> {
+                startPlayer()
+            }
+        }
+    }
 
     private fun toolbarCreate() {
         toolbar = findViewById<Toolbar>(R.id.toolbar)
@@ -95,19 +169,14 @@ class AudioPlayerActivity : AppCompatActivity() {
         toolbarCreate()
         showTrackInfo()
 
+        currentTrackTime = findViewById<TextView>(R.id.currentTrackTime)
+        progressBar = findViewById<ProgressBar>(R.id.progressBar)
         playButton = findViewById<ImageView>(R.id.playPauseButton)
         playButton.setOnClickListener {
-            when {
-                play -> {
-                    playButton.setImageDrawable(getDrawable(R.drawable.play_button))
-                }
-                else -> {
-                    playButton.setImageDrawable(getDrawable(R.drawable.pause_button))
-                }
-            }
-            play = !play
-
+            playbackControl()
         }
+
+        preparePlayer(track.previewUrl)
 
         collectionButton = findViewById<ImageView>(R.id.collectionButton)
         collectionButton.setOnClickListener {
@@ -139,4 +208,16 @@ class AudioPlayerActivity : AppCompatActivity() {
 
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaPlayer.release()
+        handler.removeCallbacks(timer)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        pausePlayer()
+    }
+
 }
