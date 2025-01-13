@@ -54,6 +54,8 @@ class AudioPlayerActivity : AppCompatActivity() {
         private const val STATE_PREPARED = 1
         private const val STATE_PLAYING = 2
         private const val STATE_PAUSED = 3
+
+        private const val TIMER_DELAY = 100L
     }
 
     private var playerState = STATE_DEFAULT
@@ -62,13 +64,12 @@ class AudioPlayerActivity : AppCompatActivity() {
         override fun run() {
             if (playerState == STATE_PLAYING) {
                 currentTrackTime.text = SimpleDateFormat("m:ss", Locale.getDefault()).format(mediaPlayer.currentPosition)
-                handler.postDelayed(this, 100)
+                handler.postDelayed(this, TIMER_DELAY)
             }
         }
     }
 
     private fun preparePlayer(url: String) {
-        Log.i("track", url)
         mediaPlayer.setDataSource(url)
         mediaPlayer.prepareAsync()
         mediaPlayer.setOnPreparedListener {
@@ -217,7 +218,8 @@ class AudioPlayerActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        pausePlayer()
+        if (playerState == STATE_PLAYING)
+            pausePlayer()
     }
 
 }
