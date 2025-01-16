@@ -3,14 +3,16 @@ package com.example.playlistmaker
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -46,6 +48,8 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var errorImage: ImageView
     private lateinit var errorText: TextView
     private lateinit var updateButton: MaterialButton
+
+    private lateinit var progressBar: ProgressBar
 
     var isHistoryView = false
 
@@ -95,13 +99,15 @@ class SearchActivity : AppCompatActivity() {
 
                 searchEditTextValue = searchEditText.text.toString()
 
-                if (s.isNullOrEmpty()){
+                if (searchEditTextValue.isEmpty()){
                     clearButton.visibility = View.GONE
                     hideError()
                     showHistory()
                 } else {
                     clearButton.visibility = View.VISIBLE
+                    searchDebounce()
                 }
+
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -113,6 +119,18 @@ class SearchActivity : AppCompatActivity() {
                 showHistory()
             }
         }
+    }
+
+    private var isClickAllowed = true
+    private val handler = Handler(Looper.getMainLooper())
+
+    private fun clickDebounce() : Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
     }
 
     private fun trackListViewCreate() {
@@ -130,7 +148,9 @@ class SearchActivity : AppCompatActivity() {
                     trackList.addAll(getTrackHistory())
                     trackAdapter.notifyDataSetChanged()
                 }
-                openAudioPlayer(item)
+
+                if (clickDebounce())
+                    openAudioPlayer(item)
             }
         }
 
@@ -156,11 +176,14 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun trackListViewUpdate() {
-        trackApiService.searchTracks(searchEditText.text.toString()).enqueue(object : Callback<TrackResponse> {
+        if (searchEditTextValue.isEmpty()) return
+        showView(LOADING_VIEW)
+        trackApiService.searchTracks(searchEditTextValue).enqueue(object : Callback<TrackResponse> {
             override fun onResponse(
                 call: Call<TrackResponse>,
                 response: Response<TrackResponse>
             ) {
+                showView(LIST_VIEW)
                 if (response.isSuccessful) {
                     val responseBody = response.body()
                     if (responseBody != null && responseBody.resultCount > 0) {
@@ -250,6 +273,19 @@ class SearchActivity : AppCompatActivity() {
         trackAdapter.notifyDataSetChanged()
     }
 
+    private fun showView(viewID: Int) {
+        progressBar.isVisible = false
+        errorView.isVisible = false
+        trackListView.isVisible = false
+        hideHistory()
+        when (viewID) {
+            LOADING_VIEW ->
+                progressBar.isVisible = true
+            LIST_VIEW ->
+                trackListView.isVisible = true
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -266,17 +302,28 @@ class SearchActivity : AppCompatActivity() {
         errorViewCreate()
         historyViewCreate()
 
-        searchEditText.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                trackListViewUpdate()
-            }
-            false
-        }
+        progressBar = findViewById<ProgressBar>(R.id.progressBar)
+
+    }
+
+    private val searchRunnable = Runnable { trackListViewUpdate() }
+
+    private fun searchDebounce() {
+        handler.removeCallbacks(searchRunnable)
+        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
     }
 
     companion object {
         const val SEARCH_TEXT = "SEARCH_TEXT"
         const val SEARCH_TEXT_DEF = ""
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+
+        private const val LIST_VIEW = 0
+        private const val HISTORY_LIST_VIEW = 1
+        private const val ERROR_VIEW = 2
+        private const val LOADING_VIEW = 3
+        private const val DEFAULT_VIEW = 4
     }
 
     private var searchEditTextValue: String = SEARCH_TEXT_DEF
