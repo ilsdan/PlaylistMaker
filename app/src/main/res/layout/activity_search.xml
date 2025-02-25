@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:theme="@style/Base.Theme.PlaylistMaker"
     android:background="?attr/colorPrimary"
-    tools:context=".SearchActivity">
+    tools:context=".ui.search.SearchActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"

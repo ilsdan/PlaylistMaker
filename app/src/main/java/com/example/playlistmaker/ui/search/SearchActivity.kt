@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui.search
 
 import android.content.Context
 import android.content.Intent
@@ -22,13 +22,16 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.ui.AudioPlayerActivity
+import com.example.playlistmaker.Creator
+import com.example.playlistmaker.HISTORY_KEY
+import com.example.playlistmaker.PLAYLIST_MAKER_PREFERENCES
+import com.example.playlistmaker.R
+import com.example.playlistmaker.domain.api.TracksInteractor
+import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.ui.MainActivity
 import com.google.android.material.button.MaterialButton
 import com.google.gson.Gson
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
 
@@ -53,12 +56,6 @@ class SearchActivity : AppCompatActivity() {
 
     var isHistoryView = false
 
-    private val itunesBaseUrl = "https://itunes.apple.com"
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(itunesBaseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    private val trackApiService = retrofit.create(iTunesApi::class.java)
 
     private fun toolbarCreate() {
         toolbar = findViewById<Toolbar>(R.id.toolbar)
@@ -178,29 +175,25 @@ class SearchActivity : AppCompatActivity() {
     private fun trackListViewUpdate() {
         if (searchEditTextValue.isEmpty()) return
         showView(LOADING_VIEW)
-        trackApiService.searchTracks(searchEditTextValue).enqueue(object : Callback<TrackResponse> {
-            override fun onResponse(
-                call: Call<TrackResponse>,
-                response: Response<TrackResponse>
-            ) {
-                showView(LIST_VIEW)
-                if (response.isSuccessful) {
-                    val responseBody = response.body()
-                    if (responseBody != null && responseBody.resultCount > 0) {
-                        showTrackList(responseBody.results)
-                    } else {
+
+        Creator.provideTracksInteractor().searchTracks(searchEditTextValue, object: TracksInteractor.TracksConsumer {
+            override fun consume(foundTracks: List<Track>?) {
+                handler.post {
+                    showView(LIST_VIEW)
+                    if (!foundTracks.isNullOrEmpty()) {
+                        showTrackList(foundTracks)
+                    }
+                    if (foundTracks != null && foundTracks.isEmpty() ) {
                         showError("Ничего не нашлось", R.drawable.empty_response, false)
                     }
-                } else {
-                    showError("Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету", R.drawable.network_error, true)
+
+                    if (foundTracks == null) {
+                        showError("Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету",
+                            R.drawable.network_error, true)
+                    }
                 }
             }
-
-            override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
-                showError("Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету", R.drawable.network_error, true)
-            }
         })
-
     }
 
     private fun showError(text: String, icon: Int, showUpdateButton: Boolean ) {
