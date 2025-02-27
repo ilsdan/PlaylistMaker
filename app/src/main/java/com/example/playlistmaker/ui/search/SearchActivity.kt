@@ -24,8 +24,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.ui.AudioPlayerActivity
 import com.example.playlistmaker.Creator
-import com.example.playlistmaker.HISTORY_KEY
-import com.example.playlistmaker.PLAYLIST_MAKER_PREFERENCES
 import com.example.playlistmaker.R
 import com.example.playlistmaker.domain.api.TracksInteractor
 import com.example.playlistmaker.domain.models.Track
@@ -34,7 +32,6 @@ import com.google.android.material.button.MaterialButton
 import com.google.gson.Gson
 
 class SearchActivity : AppCompatActivity() {
-
 
     private lateinit var trackList: MutableList<Track>
     private lateinit var trackAdapter: TrackAdapter
@@ -56,6 +53,7 @@ class SearchActivity : AppCompatActivity() {
 
     var isHistoryView = false
 
+    private lateinit var tracksInteractor: TracksInteractor
 
     private fun toolbarCreate() {
         toolbar = findViewById<Toolbar>(R.id.toolbar)
@@ -104,7 +102,6 @@ class SearchActivity : AppCompatActivity() {
                     clearButton.visibility = View.VISIBLE
                     searchDebounce()
                 }
-
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -176,7 +173,7 @@ class SearchActivity : AppCompatActivity() {
         if (searchEditTextValue.isEmpty()) return
         showView(LOADING_VIEW)
 
-        Creator.provideTracksInteractor().searchTracks(searchEditTextValue, object: TracksInteractor.TracksConsumer {
+        tracksInteractor.searchTracks(searchEditTextValue, object: TracksInteractor.TracksConsumer {
             override fun consume(foundTracks: List<Track>?) {
                 handler.post {
                     showView(LIST_VIEW)
@@ -228,25 +225,15 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun clearTrackHistory() {
-        getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE).edit().remove(HISTORY_KEY).apply()
+        tracksInteractor.cleanTracksHistory()
     }
 
     private fun addTrackToHistory(track: Track) {
-        val history = getTrackHistory().toMutableList()
-        history.removeAll { it.trackId == track.trackId }
-        history.add(0, track)
-        if (history.size > 10) {
-            history.removeLast()
-        }
-        val json = Gson().toJson(history)
-        getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE).edit()
-            .putString(HISTORY_KEY, json)
-            .apply()
+        tracksInteractor.addTrackToHistory(track)
     }
 
     private fun getTrackHistory(): List<Track> {
-        val json = getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE).getString(HISTORY_KEY, null) ?: return emptyList()
-        return Gson().fromJson(json, Array<Track>::class.java).toList()
+        return tracksInteractor.getTracksHistory()
     }
 
     private fun hideHistory() {
@@ -255,15 +242,17 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun showHistory() {
-        if (!getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE).contains(HISTORY_KEY))
+        this.trackList.clear()
+        this.trackList.addAll(getTrackHistory())
+        trackAdapter.notifyDataSetChanged()
+
+        if (!tracksInteractor.isExistTracksHistory())
             return
+
         isHistoryView = true
         clearHistoryButton.isVisible = true
         historySearchText.isVisible = true
         errorView.isVisible = false
-        this.trackList.clear()
-        this.trackList.addAll(getTrackHistory())
-        trackAdapter.notifyDataSetChanged()
     }
 
     private fun showView(viewID: Int) {
@@ -296,6 +285,8 @@ class SearchActivity : AppCompatActivity() {
         historyViewCreate()
 
         progressBar = findViewById<ProgressBar>(R.id.progressBar)
+
+        tracksInteractor = Creator.provideTracksInteractor(this)
 
     }
 

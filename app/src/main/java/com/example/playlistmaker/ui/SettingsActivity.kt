@@ -10,9 +10,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.playlistmaker.App
-import com.example.playlistmaker.PLAYLIST_MAKER_PREFERENCES
 import com.example.playlistmaker.R
-import com.example.playlistmaker.THEME_SWITCHER_KEY
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
@@ -20,16 +18,12 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var themeSwitcher: SwitchMaterial
 
     private fun themeSwitcherCreate() {
-
-        val sharedPrefs = getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE)
-        val isDarkTheme = sharedPrefs.getBoolean(THEME_SWITCHER_KEY, false)
         themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
-        themeSwitcher.isChecked = isDarkTheme
+        themeSwitcher.isChecked = (applicationContext as App).isDarkTheme()
         themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
             (applicationContext as App).switchTheme(checked)
         }
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
