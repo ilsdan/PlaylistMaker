@@ -31,24 +31,5 @@ class App : Application() {
                 AppCompatDelegate.MODE_NIGHT_NO
             }
         )
-
-    }
-
-    fun isDarkTheme(): Boolean {
-        return darkTheme
-    }
-
-    fun switchTheme(darkThemeEnabled: Boolean) {
-        darkTheme = darkThemeEnabled
-
-        settingsInteractor.setDarkMode(darkTheme)
-
-        AppCompatDelegate.setDefaultNightMode(
-            if (darkThemeEnabled) {
-                AppCompatDelegate.MODE_NIGHT_YES
-            } else {
-                AppCompatDelegate.MODE_NIGHT_NO
-            }
-        )
     }
 }
