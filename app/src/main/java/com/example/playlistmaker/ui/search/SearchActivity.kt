@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui.search
 
 import android.content.Context
 import android.content.Intent
@@ -22,16 +22,16 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.ui.AudioPlayerActivity
+import com.example.playlistmaker.Creator
+import com.example.playlistmaker.R
+import com.example.playlistmaker.domain.api.TracksInteractor
+import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.ui.MainActivity
 import com.google.android.material.button.MaterialButton
 import com.google.gson.Gson
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
-
 
     private lateinit var trackList: MutableList<Track>
     private lateinit var trackAdapter: TrackAdapter
@@ -53,12 +53,7 @@ class SearchActivity : AppCompatActivity() {
 
     var isHistoryView = false
 
-    private val itunesBaseUrl = "https://itunes.apple.com"
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(itunesBaseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    private val trackApiService = retrofit.create(iTunesApi::class.java)
+    private lateinit var tracksInteractor: TracksInteractor
 
     private fun toolbarCreate() {
         toolbar = findViewById<Toolbar>(R.id.toolbar)
@@ -107,7 +102,6 @@ class SearchActivity : AppCompatActivity() {
                     clearButton.visibility = View.VISIBLE
                     searchDebounce()
                 }
-
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -178,29 +172,25 @@ class SearchActivity : AppCompatActivity() {
     private fun trackListViewUpdate() {
         if (searchEditTextValue.isEmpty()) return
         showView(LOADING_VIEW)
-        trackApiService.searchTracks(searchEditTextValue).enqueue(object : Callback<TrackResponse> {
-            override fun onResponse(
-                call: Call<TrackResponse>,
-                response: Response<TrackResponse>
-            ) {
-                showView(LIST_VIEW)
-                if (response.isSuccessful) {
-                    val responseBody = response.body()
-                    if (responseBody != null && responseBody.resultCount > 0) {
-                        showTrackList(responseBody.results)
-                    } else {
+
+        tracksInteractor.searchTracks(searchEditTextValue, object: TracksInteractor.TracksConsumer {
+            override fun consume(foundTracks: List<Track>?) {
+                handler.post {
+                    showView(LIST_VIEW)
+                    if (!foundTracks.isNullOrEmpty()) {
+                        showTrackList(foundTracks)
+                    }
+                    if (foundTracks != null && foundTracks.isEmpty() ) {
                         showError("Ничего не нашлось", R.drawable.empty_response, false)
                     }
-                } else {
-                    showError("Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету", R.drawable.network_error, true)
+
+                    if (foundTracks == null) {
+                        showError("Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету",
+                            R.drawable.network_error, true)
+                    }
                 }
             }
-
-            override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
-                showError("Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету", R.drawable.network_error, true)
-            }
         })
-
     }
 
     private fun showError(text: String, icon: Int, showUpdateButton: Boolean ) {
@@ -235,25 +225,15 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun clearTrackHistory() {
-        getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE).edit().remove(HISTORY_KEY).apply()
+        tracksInteractor.cleanTracksHistory()
     }
 
     private fun addTrackToHistory(track: Track) {
-        val history = getTrackHistory().toMutableList()
-        history.removeAll { it.trackId == track.trackId }
-        history.add(0, track)
-        if (history.size > 10) {
-            history.removeLast()
-        }
-        val json = Gson().toJson(history)
-        getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE).edit()
-            .putString(HISTORY_KEY, json)
-            .apply()
+        tracksInteractor.addTrackToHistory(track)
     }
 
     private fun getTrackHistory(): List<Track> {
-        val json = getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE).getString(HISTORY_KEY, null) ?: return emptyList()
-        return Gson().fromJson(json, Array<Track>::class.java).toList()
+        return tracksInteractor.getTracksHistory()
     }
 
     private fun hideHistory() {
@@ -262,15 +242,17 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun showHistory() {
-        if (!getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE).contains(HISTORY_KEY))
+        this.trackList.clear()
+        this.trackList.addAll(getTrackHistory())
+        trackAdapter.notifyDataSetChanged()
+
+        if (!tracksInteractor.isExistTracksHistory())
             return
+
         isHistoryView = true
         clearHistoryButton.isVisible = true
         historySearchText.isVisible = true
         errorView.isVisible = false
-        this.trackList.clear()
-        this.trackList.addAll(getTrackHistory())
-        trackAdapter.notifyDataSetChanged()
     }
 
     private fun showView(viewID: Int) {
@@ -303,6 +285,8 @@ class SearchActivity : AppCompatActivity() {
         historyViewCreate()
 
         progressBar = findViewById<ProgressBar>(R.id.progressBar)
+
+        tracksInteractor = Creator.provideTracksInteractor(this)
 
     }
 

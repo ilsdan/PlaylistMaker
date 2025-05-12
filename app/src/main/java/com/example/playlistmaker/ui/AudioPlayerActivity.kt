@@ -1,11 +1,10 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui
 
 import android.icu.text.SimpleDateFormat
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -17,6 +16,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.playlistmaker.R
+import com.example.playlistmaker.domain.models.Track
 import com.google.gson.Gson
 import java.util.Locale
 
@@ -177,7 +178,7 @@ class AudioPlayerActivity : AppCompatActivity() {
             playbackControl()
         }
 
-        preparePlayer(track.previewUrl)
+        preparePlayer(track.previewUrl.toString())
 
         collectionButton = findViewById<ImageView>(R.id.collectionButton)
         collectionButton.setOnClickListener {
