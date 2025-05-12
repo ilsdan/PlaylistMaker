@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     android:background="?attr/colorPrimary"
     android:nestedScrollingEnabled="false"
-    tools:context=".ui.AudioPlayerActivity">
+    tools:context=".player.ui.PlayerActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
