@@ -21,12 +21,6 @@ import com.google.gson.Gson
 
 class SearchActivity : AppCompatActivity() {
 
-    companion object {
-        private const val SEARCH_TEXT = "SEARCH_TEXT"
-        private const val SEARCH_TEXT_DEF = ""
-        private const val CLICK_DEBOUNCE_DELAY = 1000L
-    }
-
     private var searchEditTextValue: String = SEARCH_TEXT_DEF
     private lateinit var viewModel: SearchViewModel
     private lateinit var binding: ActivitySearchBinding
@@ -198,7 +192,7 @@ class SearchActivity : AppCompatActivity() {
         binding.tracksList.isVisible = false
         binding.errorView.isVisible = true
         binding.errorImage.setImageDrawable(getDrawable(R.drawable.empty_response))
-        binding.errorText.text = "Ничего не нашлось"
+        binding.errorText.text = getString(R.string.nothing_was_found)
         binding.updateButton.isVisible = false
     }
 
@@ -207,7 +201,7 @@ class SearchActivity : AppCompatActivity() {
         binding.tracksList.isVisible = false
         binding.errorView.isVisible = true
         binding.errorImage.setImageDrawable(getDrawable(R.drawable.network_error))
-        binding.errorText.text = "Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету"
+        binding.errorText.text = getString(R.string.communication_problems)
         binding.updateButton.isVisible = true
     }
 
@@ -237,6 +231,12 @@ class SearchActivity : AppCompatActivity() {
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         searchEditTextValue = savedInstanceState.getString(SEARCH_TEXT, SEARCH_TEXT_DEF)
+    }
+
+    companion object {
+        private const val SEARCH_TEXT = "SEARCH_TEXT"
+        private const val SEARCH_TEXT_DEF = ""
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 
 }

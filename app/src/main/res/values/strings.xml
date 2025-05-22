@@ -15,6 +15,11 @@
     <string name="update_text">Обновить</string>
     <string name="search_history">Вы искали</string>
     <string name="clear_search_history">Очистить историю</string>
+    <string name="nothing_was_found">Ничего не нашлось</string>
+    <string name="communication_problems">Проблемы со связью
+
+Загрузка не удалась. Проверьте подключение к интернету</string>
+
 
     <string name="track_length_label">Длительность</string>
     <string name="album_label">Альбом</string>

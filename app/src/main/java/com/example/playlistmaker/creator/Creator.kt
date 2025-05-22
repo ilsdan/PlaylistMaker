@@ -1,7 +1,7 @@
 package com.example.playlistmaker.creator
 
 import android.content.Context
-import com.example.playlistmaker.player.data.TrackPlayer
+import com.example.playlistmaker.player.domain.TrackPlayer
 import com.example.playlistmaker.player.data.TrackPlayerImpl
 import com.example.playlistmaker.settings.data.SettingsRepositoryImpl
 import com.example.playlistmaker.search.data.network.RetrofitNetworkClient
@@ -24,7 +24,7 @@ object Creator {
     }
 
     fun provideTracksInteractor(context: Context): TracksInteractor {
-        return TracksInteractorImpl(getTracksRepository(context), context)
+        return TracksInteractorImpl(getTracksRepository(context))
     }
 
     private fun getSettingsRepository(context: Context): SettingsRepository {
