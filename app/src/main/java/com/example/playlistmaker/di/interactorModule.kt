@@ -15,18 +15,18 @@ import org.koin.dsl.module
 val interactorModule = module {
 
     factory<TrackPlayer> {
-        TrackPlayerImpl()
+        TrackPlayerImpl(get())
     }
 
     single<TracksInteractor> {
         TracksInteractorImpl(get())
     }
 
-    single<SharingInteractor> {
+    factory<SharingInteractor> {
         SharingInteractorImpl(get(), androidContext())
     }
 
-    single<SettingsInteractor> {
+    factory<SettingsInteractor> {
         SettingsInteractorImpl(get())
     }
 

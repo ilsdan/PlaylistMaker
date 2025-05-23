@@ -1,6 +1,7 @@
 package com.example.playlistmaker.di
 
 import android.content.Context
+import android.media.MediaPlayer
 import com.example.playlistmaker.search.data.LocalStorage
 import com.example.playlistmaker.search.data.network.NetworkClient
 import com.example.playlistmaker.search.data.network.RetrofitNetworkClient
@@ -45,5 +46,8 @@ val dataModule = module {
     single<NetworkClient> {
         RetrofitNetworkClient(get())
     }
+
+    factory { MediaPlayer() }
+
 
 }

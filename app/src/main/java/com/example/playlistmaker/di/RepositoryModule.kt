@@ -9,11 +9,11 @@ import org.koin.dsl.module
 
 val repositoryModule = module {
 
-    single<TracksRepository> {
+    factory<TracksRepository> {
         TracksRepositoryImpl(get(), get())
     }
 
-    single<SettingsRepository> {
+    factory<SettingsRepository> {
         SettingsRepositoryImpl(get())
     }
 

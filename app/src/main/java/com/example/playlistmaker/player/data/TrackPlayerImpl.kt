@@ -5,9 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import com.example.playlistmaker.player.domain.TrackPlayer
 
-class TrackPlayerImpl : TrackPlayer {
-
-    private var mediaPlayer = MediaPlayer()
+class TrackPlayerImpl(private var mediaPlayer: MediaPlayer) : TrackPlayer {
 
     private lateinit var statusObserver: TrackPlayer.StatusObserver
 

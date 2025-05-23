@@ -101,6 +101,7 @@ class SearchActivity : AppCompatActivity() {
             override fun onItemClick(item: Track) {
                 if (clickDebounce())
                     viewModel.addTrackToHistory(item)
+                    viewModel.showHistory()
                     openPlayer()
             }
         }
