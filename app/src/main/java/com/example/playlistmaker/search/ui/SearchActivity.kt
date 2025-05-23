@@ -9,7 +9,6 @@ import android.text.TextWatcher
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.R
@@ -17,12 +16,12 @@ import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.main.ui.MainActivity
 import com.example.playlistmaker.search.domain.SearchScreenState
-import com.google.gson.Gson
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
 
     private var searchEditTextValue: String = SEARCH_TEXT_DEF
-    private lateinit var viewModel: SearchViewModel
+    private val viewModel: SearchViewModel by viewModel()
     private lateinit var binding: ActivitySearchBinding
     private lateinit var trackAdapter: TrackAdapter
 
@@ -100,18 +99,18 @@ class SearchActivity : AppCompatActivity() {
 
         val onItemClickListener = object : OnItemClickListener {
             override fun onItemClick(item: Track) {
-                viewModel.addTrackToHistory(item)
                 if (clickDebounce())
-                    openPlayer(item)
+                    viewModel.addTrackToHistory(item)
+                    viewModel.showHistory()
+                    openPlayer()
             }
         }
         trackAdapter = TrackAdapter(onItemClickListener)
         binding.tracksList.adapter = trackAdapter
     }
 
-    private fun openPlayer(track: Track) {
+    private fun openPlayer() {
         val displayIntent = Intent(this, PlayerActivity::class.java)
-        displayIntent.putExtra("track", Gson().toJson(track))
         startActivity(displayIntent)
     }
 
@@ -144,8 +143,6 @@ class SearchActivity : AppCompatActivity() {
 
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        viewModel = ViewModelProvider(this, SearchViewModel.getViewModelFactory())[SearchViewModel::class.java]
 
         toolbarCreate()
         searchEditTextCreate()

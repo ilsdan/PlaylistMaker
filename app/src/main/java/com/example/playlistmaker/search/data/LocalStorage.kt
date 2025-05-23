@@ -5,14 +5,11 @@ import com.example.playlistmaker.search.domain.models.Track
 import com.google.gson.Gson
 
 
-class LocalStorage(private val sharedPreferences: SharedPreferences) {
-    private companion object {
-        const val HISTORY_KEY = "search_history"
-    }
+class LocalStorage(private val sharedPreferences: SharedPreferences, private val gson: Gson) {
 
     fun getTracksHistory(): List<Track> {
         val json = sharedPreferences.getString(HISTORY_KEY, null) ?: return emptyList()
-        return Gson().fromJson(json, Array<Track>::class.java).toList()
+        return gson.fromJson(json, Array<Track>::class.java).toList()
     }
 
     fun addTrackToHistory(track: Track) {
@@ -22,7 +19,7 @@ class LocalStorage(private val sharedPreferences: SharedPreferences) {
         if (history.size > 10) {
             history.removeAt(history.lastIndex)
         }
-        val json = Gson().toJson(history)
+        val json = gson.toJson(history)
         sharedPreferences.edit().putString(HISTORY_KEY, json).apply()
     }
 
@@ -34,5 +31,8 @@ class LocalStorage(private val sharedPreferences: SharedPreferences) {
         return sharedPreferences.contains(HISTORY_KEY)
     }
 
+    private companion object {
+        const val HISTORY_KEY = "search_history"
+    }
 
 }

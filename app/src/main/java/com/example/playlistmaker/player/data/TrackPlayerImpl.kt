@@ -5,22 +5,11 @@ import android.os.Handler
 import android.os.Looper
 import com.example.playlistmaker.player.domain.TrackPlayer
 
-class TrackPlayerImpl : TrackPlayer {
-
-    private var mediaPlayer = MediaPlayer()
+class TrackPlayerImpl(private var mediaPlayer: MediaPlayer) : TrackPlayer {
 
     private lateinit var statusObserver: TrackPlayer.StatusObserver
 
     private val handler = Handler(Looper.getMainLooper())
-
-    companion object {
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
-
-        private const val TIMER_DELAY = 100L
-    }
 
     private var playerState = STATE_DEFAULT
 
@@ -71,6 +60,15 @@ class TrackPlayerImpl : TrackPlayer {
 
     override fun release() {
         mediaPlayer.release()
+    }
+
+    companion object {
+        private const val STATE_DEFAULT = 0
+        private const val STATE_PREPARED = 1
+        private const val STATE_PLAYING = 2
+        private const val STATE_PAUSED = 3
+
+        private const val TIMER_DELAY = 100L
     }
 
 }

@@ -7,15 +7,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.ViewModelProvider
-import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
 import com.example.playlistmaker.main.ui.MainActivity
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: SettingsViewModel
+    private val viewModel: SettingsViewModel by viewModel()
 
     private lateinit var binding: ActivitySettingsBinding
 
@@ -60,7 +59,7 @@ class SettingsActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_settings)
 
-        viewModel = ViewModelProvider(this, SettingsViewModel.getViewModelFactory(Creator.provideSharingInteractor(this), Creator.provideSettingsInteractor(this)))[SettingsViewModel::class.java]
+        //viewModel = ViewModelProvider(this, SettingsViewModel.getViewModelFactory(Creator.provideSharingInteractor(this), Creator.provideSettingsInteractor(this)))[SettingsViewModel::class.java]
 
         viewModel.getDarkThemeLiveData().observe(this) { isDarkTheme ->
             changeDarkThemeSwitch(isDarkTheme)
