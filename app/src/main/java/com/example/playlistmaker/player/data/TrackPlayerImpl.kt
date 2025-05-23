@@ -13,15 +13,6 @@ class TrackPlayerImpl : TrackPlayer {
 
     private val handler = Handler(Looper.getMainLooper())
 
-    companion object {
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
-
-        private const val TIMER_DELAY = 100L
-    }
-
     private var playerState = STATE_DEFAULT
 
     private val timer = object : Runnable {
@@ -71,6 +62,15 @@ class TrackPlayerImpl : TrackPlayer {
 
     override fun release() {
         mediaPlayer.release()
+    }
+
+    companion object {
+        private const val STATE_DEFAULT = 0
+        private const val STATE_PREPARED = 1
+        private const val STATE_PLAYING = 2
+        private const val STATE_PAUSED = 3
+
+        private const val TIMER_DELAY = 100L
     }
 
 }

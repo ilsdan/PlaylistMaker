@@ -13,17 +13,18 @@ import com.example.playlistmaker.player.domain.PlayStatus
 import com.example.playlistmaker.player.domain.PlayerScreenState
 import com.example.playlistmaker.search.domain.models.Track
 import com.google.gson.Gson
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import java.util.Locale
 
 class PlayerActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: PlayerViewModel
+    private val viewModel:  PlayerViewModel by viewModel()
+
     private lateinit var binding: ActivityAudioplayerBinding
 
     private var like = false
     private var inCollection = false
-
-    private lateinit var track: Track
 
     private fun startPlayer() {
         binding.playPauseButton.setImageDrawable(getDrawable(R.drawable.pause_button))
@@ -43,7 +44,7 @@ class PlayerActivity : AppCompatActivity() {
         }
     }
 
-    private fun showTrackInfo() {
+    private fun showTrackInfo(track: Track) {
         Glide.with(applicationContext).load(track.artworkUrl100?.replaceAfterLast('/',"512x512bb.jpg"))
             .placeholder(R.drawable.track_placeholder)
             .fitCenter()
@@ -65,13 +66,10 @@ class PlayerActivity : AppCompatActivity() {
         binding = ActivityAudioplayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        track = Gson().fromJson(intent.getStringExtra("track"), Track::class.java)
-
-        viewModel = ViewModelProvider(this, PlayerViewModel.getViewModelFactory(track))[PlayerViewModel::class.java]
-
         viewModel.getScreenStateLiveData().observe(this) { screenState ->
             when (screenState) {
                 is PlayerScreenState.Content -> {
+                    showTrackInfo(screenState.trackModel)
                     binding.progressBar.isVisible = false
                     binding.playPauseButton.isVisible = true
                     binding.progressBar.isVisible = false
@@ -90,7 +88,6 @@ class PlayerActivity : AppCompatActivity() {
         }
 
         toolbarCreate()
-        showTrackInfo()
 
         binding.playPauseButton.setOnClickListener {
             viewModel.playbackControl()

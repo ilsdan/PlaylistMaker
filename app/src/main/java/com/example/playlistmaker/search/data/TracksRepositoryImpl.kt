@@ -1,6 +1,5 @@
 package com.example.playlistmaker.search.data
 
-import android.util.Log
 import com.example.playlistmaker.search.data.network.NetworkClient
 import com.example.playlistmaker.search.domain.api.TracksRepository
 import com.example.playlistmaker.search.domain.models.Track
@@ -9,7 +8,6 @@ import com.example.playlistmaker.search.data.dto.TracksSearchResponse
 
 class TracksRepositoryImpl(private val networkClient: NetworkClient, private val localStorage: LocalStorage) :
     TracksRepository {
-
 
     override fun searchTracks(expression: String): List<Track> {
         val response = networkClient.doRequest(TracksSearchRequest(expression))
