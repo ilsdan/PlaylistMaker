@@ -19,6 +19,12 @@
     <string name="communication_problems">Проблемы со связью
 
 Загрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="favorite_tracks_label">Избранные треки</string>
+    <string name="playlists_label">Плейлисты</string>
+    <string name="library_is_empty">Ваша медиатека пуста</string>
+    <string name="no_playlist">Вы не создали ни одного плейлиста</string>
+    <string name="new_playlist">Новый плейлист</string>
+
 
 
     <string name="track_length_label">Длительность</string>
