@@ -7,6 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.playlistmaker.R
+import com.example.playlistmaker.databinding.FragmentFavoriteTracksBinding
+import com.example.playlistmaker.databinding.FragmentPlaylistsBinding
 
 class PlaylistsFragment : Fragment() {
 
@@ -15,6 +17,8 @@ class PlaylistsFragment : Fragment() {
     }
 
     private val viewModel: PlaylistsViewModel by viewModels()
+
+    private lateinit var binding: FragmentPlaylistsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,6 +30,7 @@ class PlaylistsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return inflater.inflate(R.layout.fragment_playlists, container, false)
+        binding = FragmentPlaylistsBinding.inflate(inflater, container, false)
+        return binding.root
     }
 }
