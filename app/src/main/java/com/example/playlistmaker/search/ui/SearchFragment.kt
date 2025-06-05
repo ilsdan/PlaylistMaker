@@ -1,42 +1,40 @@
 package com.example.playlistmaker.search.ui
 
-import android.content.Intent
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.playlistmaker.player.ui.PlayerActivity
+import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.ActivitySearchBinding
-import com.example.playlistmaker.search.domain.models.Track
-import com.example.playlistmaker.main.ui.MainActivity
+import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.search.domain.SearchScreenState
+import com.example.playlistmaker.search.domain.models.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import kotlin.getValue
 
-class SearchActivity : AppCompatActivity() {
+class SearchFragment : Fragment() {
+
+    companion object {
+        private const val SEARCH_TEXT_DEF = ""
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
+    }
+
+    private lateinit var binding: FragmentSearchBinding
 
     private var searchEditTextValue: String = SEARCH_TEXT_DEF
     private val viewModel: SearchViewModel by viewModel()
-    private lateinit var binding: ActivitySearchBinding
     private lateinit var trackAdapter: TrackAdapter
 
-    private fun toolbarCreate() {
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        binding.toolbar.setNavigationOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
-    }
-
     private fun hideKeyboard() {
-        val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
+        val inputMethodManager = requireContext().getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
         inputMethodManager?.hideSoftInputFromWindow(binding.searchEditText.windowToken, 0)
     }
 
@@ -94,15 +92,11 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun trackListViewCreate() {
-
-        binding.tracksList.layoutManager = LinearLayoutManager(this)
-
         val onItemClickListener = object : OnItemClickListener {
             override fun onItemClick(item: Track) {
                 if (clickDebounce())
                     viewModel.addTrackToHistory(item)
-                    viewModel.showHistory()
-                    openPlayer()
+                openPlayer()
             }
         }
         trackAdapter = TrackAdapter(onItemClickListener)
@@ -110,8 +104,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun openPlayer() {
-        val displayIntent = Intent(this, PlayerActivity::class.java)
-        startActivity(displayIntent)
+        findNavController().navigate(R.id.action_searchFragment_to_playerFragment)
     }
 
     private fun errorViewCreate() {
@@ -136,23 +129,6 @@ class SearchActivity : AppCompatActivity() {
     private fun hideHistory() {
         binding.clearHistoryButton.isVisible = false
         binding.HistorySearchText.isVisible = false
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        binding = ActivitySearchBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        toolbarCreate()
-        searchEditTextCreate()
-        trackListViewCreate()
-        errorViewCreate()
-        historyViewCreate()
-
-        viewModel.observeState().observe(this) {
-            render(it)
-        }
     }
 
     private fun render(state: SearchScreenState) {
@@ -188,7 +164,7 @@ class SearchActivity : AppCompatActivity() {
         binding.progressBar.isVisible = false
         binding.tracksList.isVisible = false
         binding.errorView.isVisible = true
-        binding.errorImage.setImageDrawable(getDrawable(R.drawable.empty_response))
+        binding.errorImage.setImageDrawable(requireContext().getDrawable(R.drawable.empty_response))
         binding.errorText.text = getString(R.string.nothing_was_found)
         binding.updateButton.isVisible = false
     }
@@ -197,7 +173,7 @@ class SearchActivity : AppCompatActivity() {
         binding.progressBar.isVisible = false
         binding.tracksList.isVisible = false
         binding.errorView.isVisible = true
-        binding.errorImage.setImageDrawable(getDrawable(R.drawable.network_error))
+        binding.errorImage.setImageDrawable(requireContext().getDrawable(R.drawable.network_error))
         binding.errorText.text = getString(R.string.communication_problems)
         binding.updateButton.isVisible = true
     }
@@ -220,20 +196,22 @@ class SearchActivity : AppCompatActivity() {
         binding.HistorySearchText.isVisible = true
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString(SEARCH_TEXT, searchEditTextValue)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = FragmentSearchBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        searchEditTextValue = savedInstanceState.getString(SEARCH_TEXT, SEARCH_TEXT_DEF)
-    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-    companion object {
-        private const val SEARCH_TEXT = "SEARCH_TEXT"
-        private const val SEARCH_TEXT_DEF = ""
-        private const val CLICK_DEBOUNCE_DELAY = 1000L
+        searchEditTextCreate()
+        trackListViewCreate()
+        errorViewCreate()
+        historyViewCreate()
+
+        viewModel.observeState().observe(viewLifecycleOwner) {
+            render(it)
+        }
     }
 
 }

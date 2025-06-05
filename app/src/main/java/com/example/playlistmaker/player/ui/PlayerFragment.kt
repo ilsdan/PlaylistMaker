@@ -2,50 +2,41 @@ package com.example.playlistmaker.player.ui
 
 import android.icu.text.SimpleDateFormat
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.ActivityAudioplayerBinding
+import com.example.playlistmaker.databinding.FragmentPlayerBinding
 import com.example.playlistmaker.player.domain.PlayStatus
 import com.example.playlistmaker.player.domain.PlayerScreenState
 import com.example.playlistmaker.search.domain.models.Track
-import com.google.gson.Gson
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
 import java.util.Locale
+import kotlin.getValue
 
-class PlayerActivity : AppCompatActivity() {
+class PlayerFragment : Fragment() {
+
+    private lateinit var binding: FragmentPlayerBinding
 
     private val viewModel:  PlayerViewModel by viewModel()
-
-    private lateinit var binding: ActivityAudioplayerBinding
 
     private var like = false
     private var inCollection = false
 
     private fun startPlayer() {
-        binding.playPauseButton.setImageDrawable(getDrawable(R.drawable.pause_button))
+        binding.playPauseButton.setImageDrawable(requireContext().getDrawable(R.drawable.pause_button))
     }
 
     private fun pausePlayer() {
-        binding.playPauseButton.setImageDrawable(getDrawable(R.drawable.play_button))
-    }
-
-    private fun toolbarCreate() {
-        setSupportActionBar(binding.toolbar)
-        getSupportActionBar()?.setDisplayShowTitleEnabled(false)
-
-        binding.toolbar.setNavigationOnClickListener {
-            super.onBackPressed()
-            finish()
-        }
+        binding.playPauseButton.setImageDrawable(requireContext().getDrawable(R.drawable.play_button))
     }
 
     private fun showTrackInfo(track: Track) {
-        Glide.with(applicationContext).load(track.artworkUrl100?.replaceAfterLast('/',"512x512bb.jpg"))
+        Glide.with(requireContext()).load(track.artworkUrl100?.replaceAfterLast('/',"512x512bb.jpg"))
             .placeholder(R.drawable.track_placeholder)
             .fitCenter()
             .centerCrop()
@@ -61,12 +52,23 @@ class PlayerActivity : AppCompatActivity() {
         binding.country.text = track.country
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityAudioplayerBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    private fun changeButtonStyle(playStatus: PlayStatus) {
+        if (playStatus.isPlaying) {
+            startPlayer()
+        } else {
+            pausePlayer()
+        }
+    }
 
-        viewModel.getScreenStateLiveData().observe(this) { screenState ->
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = FragmentPlayerBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        viewModel.getScreenStateLiveData().observe(viewLifecycleOwner) { screenState ->
             when (screenState) {
                 is PlayerScreenState.Content -> {
                     showTrackInfo(screenState.trackModel)
@@ -75,19 +77,17 @@ class PlayerActivity : AppCompatActivity() {
                     binding.progressBar.isVisible = false
                     binding.playPauseButton.isVisible = true
                     binding.currentTrackTime.text = "0:00"
-                    binding.playPauseButton.setImageDrawable(getDrawable(R.drawable.play_button))
+                    binding.playPauseButton.setImageDrawable(requireContext().getDrawable(R.drawable.play_button))
                 }
                 is PlayerScreenState.Loading -> {
                 }
             }
         }
 
-        viewModel.getPlayStatusLiveData().observe(this) { playStatus ->
+        viewModel.getPlayStatusLiveData().observe(viewLifecycleOwner) { playStatus ->
             changeButtonStyle(playStatus)
             binding.currentTrackTime.text = SimpleDateFormat("m:ss", Locale.getDefault()).format(playStatus.progress)
         }
-
-        toolbarCreate()
 
         binding.playPauseButton.setOnClickListener {
             viewModel.playbackControl()
@@ -97,11 +97,11 @@ class PlayerActivity : AppCompatActivity() {
             inCollection = !inCollection
             when {
                 inCollection -> {
-                    binding.collectionButton.setImageDrawable(getDrawable(R.drawable.add_collection_button))
+                    binding.collectionButton.setImageDrawable(requireContext().getDrawable(R.drawable.add_collection_button))
                 }
 
                 else -> {
-                    binding.collectionButton.setImageDrawable(getDrawable(R.drawable.done_collection_button))
+                    binding.collectionButton.setImageDrawable(requireContext().getDrawable(R.drawable.done_collection_button))
                 }
             }
         }
@@ -110,21 +110,13 @@ class PlayerActivity : AppCompatActivity() {
             like = !like
             when {
                 like -> {
-                    binding.likeButton.setImageDrawable(getDrawable(R.drawable.like_fill_track_button))
+                    binding.likeButton.setImageDrawable(requireContext().getDrawable(R.drawable.like_fill_track_button))
                 }
 
                 else -> {
-                    binding.likeButton.setImageDrawable(getDrawable(R.drawable.like_track_button))
+                    binding.likeButton.setImageDrawable(requireContext().getDrawable(R.drawable.like_track_button))
                 }
             }
-        }
-    }
-
-    private fun changeButtonStyle(playStatus: PlayStatus) {
-        if (playStatus.isPlaying) {
-            startPlayer()
-        } else {
-            pausePlayer()
         }
     }
 }

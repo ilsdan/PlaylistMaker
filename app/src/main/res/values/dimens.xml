@@ -8,4 +8,5 @@
     <dimen name="clear_icon_size">16dp</dimen>
     <dimen name="main_button_text_size">22sp</dimen>
     <dimen name="cover_rounded_corners_radius">8dp</dimen>
+    <dimen name="nav_text_size">8sp</dimen>
 </resources>
