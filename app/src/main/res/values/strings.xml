@@ -26,11 +26,12 @@
     <string name="new_playlist">Новый плейлист</string>
 
 
-
     <string name="track_length_label">Длительность</string>
     <string name="album_label">Альбом</string>
     <string name="year_label">Год</string>
     <string name="style_label">Жанр</string>
     <string name="country_label">Страна</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

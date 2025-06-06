@@ -8,14 +8,13 @@
     android:layout_height="match_parent"
     android:background="?attr/colorPrimary"
     android:orientation="vertical"
-    tools:context=".settings.ui.SettingsActivity"
+    tools:context=".settings.ui.SettingsFragment"
     android:theme="@style/Base.Theme.PlaylistMaker"
     >
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
-        style="@style/ToolbarStyle"
-        app:title=" ">
+        style="@style/ToolbarStyle">
         <TextView
             style="@style/ToolbarTitleStyle"
             android:text="@string/settings_label" />
