@@ -20,7 +20,8 @@ import kotlin.getValue
 
 class PlayerFragment : Fragment() {
 
-    private lateinit var binding: FragmentPlayerBinding
+    private var _binding: FragmentPlayerBinding? = null
+    private val binding get() = _binding!!
 
     private val viewModel:  PlayerViewModel by viewModel()
 
@@ -61,7 +62,7 @@ class PlayerFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentPlayerBinding.inflate(inflater, container, false)
+        _binding = FragmentPlayerBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -118,5 +119,10 @@ class PlayerFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

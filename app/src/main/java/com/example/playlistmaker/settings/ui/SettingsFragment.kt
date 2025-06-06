@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.databinding.FragmentSettingsBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.getValue
@@ -16,7 +17,8 @@ class SettingsFragment : Fragment() {
 
     private val viewModel: SettingsViewModel by viewModel()
 
-    private lateinit var binding: FragmentSettingsBinding
+    private var _binding: FragmentSettingsBinding? = null
+    private val binding get() = _binding!!
 
     private fun themeSwitcherCreate() {
         val themeSwitcher = binding.themeSwitcher
@@ -59,7 +61,7 @@ class SettingsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentSettingsBinding.inflate(inflater, container, false)
+        _binding = FragmentSettingsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -78,5 +80,10 @@ class SettingsFragment : Fragment() {
 
         themeSwitcherCreate()
         settingsButtonsCreate()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
