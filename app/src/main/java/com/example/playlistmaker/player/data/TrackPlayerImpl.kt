@@ -1,23 +1,25 @@
 package com.example.playlistmaker.player.data
 
 import android.media.MediaPlayer
-import android.os.Handler
-import android.os.Looper
 import com.example.playlistmaker.player.domain.TrackPlayer
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class TrackPlayerImpl(private var mediaPlayer: MediaPlayer) : TrackPlayer {
 
     private lateinit var statusObserver: TrackPlayer.StatusObserver
 
-    private val handler = Handler(Looper.getMainLooper())
+    private var timerJob: Job? = null
 
     private var playerState = STATE_DEFAULT
 
-    private val timer = object : Runnable {
-        override fun run() {
-            if (playerState == STATE_PLAYING) {
+    private fun startTimer() {
+        timerJob = GlobalScope.launch {
+            while (playerState == STATE_PLAYING) {
+                delay(TIMER_DELAY)
                 statusObserver.onProgress(mediaPlayer.currentPosition.toFloat())
-                handler.postDelayed(this, TIMER_DELAY)
             }
         }
     }
@@ -33,7 +35,7 @@ class TrackPlayerImpl(private var mediaPlayer: MediaPlayer) : TrackPlayer {
         mediaPlayer.setOnCompletionListener {
             statusObserver.onCompletion()
             playerState = STATE_PREPARED
-            handler.removeCallbacks(timer)
+            timerJob?.cancel()
         }
     }
 
@@ -48,14 +50,14 @@ class TrackPlayerImpl(private var mediaPlayer: MediaPlayer) : TrackPlayer {
         mediaPlayer.start()
         playerState = STATE_PLAYING
         statusObserver.onPlay()
-        handler.post(timer)
+        startTimer()
     }
 
     override fun pause() {
         mediaPlayer.pause()
         playerState = STATE_PAUSED
         statusObserver.onStop()
-        handler.removeCallbacks(timer)
+        timerJob?.cancel()
     }
 
     override fun release() {
@@ -68,7 +70,7 @@ class TrackPlayerImpl(private var mediaPlayer: MediaPlayer) : TrackPlayer {
         private const val STATE_PLAYING = 2
         private const val STATE_PAUSED = 3
 
-        private const val TIMER_DELAY = 100L
+        private const val TIMER_DELAY = 300L
     }
 
 }

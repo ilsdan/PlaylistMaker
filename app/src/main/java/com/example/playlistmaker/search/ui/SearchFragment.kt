@@ -2,8 +2,6 @@ package com.example.playlistmaker.search.ui
 
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import androidx.fragment.app.Fragment
@@ -12,11 +10,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.search.domain.SearchScreenState
 import com.example.playlistmaker.search.domain.models.Track
+import com.example.playlistmaker.utils.debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.getValue
 
@@ -76,23 +76,12 @@ class SearchFragment : Fragment() {
         }
     }
 
-    private var isClickAllowed = true
-    private val handler = Handler(Looper.getMainLooper())
-    private fun clickDebounce() : Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
-        }
-        return current
-    }
+    private lateinit var onTrackClickDebounce: (Track) -> Unit
 
     private fun trackListViewCreate() {
         val onItemClickListener = object : OnItemClickListener {
             override fun onItemClick(item: Track) {
-                if (clickDebounce())
-                    viewModel.addTrackToHistory(item)
-                openPlayer()
+                onTrackClickDebounce(item)
             }
         }
         trackAdapter = TrackAdapter(onItemClickListener)
@@ -190,6 +179,7 @@ class SearchFragment : Fragment() {
         trackAdapter.notifyDataSetChanged()
         binding.clearHistoryButton.isVisible = true
         binding.HistorySearchText.isVisible = true
+        binding.tracksList.isVisible = true
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -199,6 +189,11 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        onTrackClickDebounce = debounce<Track>(CLICK_DEBOUNCE_DELAY, viewLifecycleOwner.lifecycleScope, false) { track ->
+            viewModel.addTrackToHistory(track)
+            openPlayer()
+        }
 
         searchEditTextCreate()
         trackListViewCreate()
