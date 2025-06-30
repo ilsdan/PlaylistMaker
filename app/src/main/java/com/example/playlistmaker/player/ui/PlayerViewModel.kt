@@ -51,7 +51,7 @@ class PlayerViewModel(
                     }
 
                     override fun onProgress(progress: Float) {
-                        playStatusLiveData.value = getCurrentPlayStatus().copy(progress = progress)
+                        playStatusLiveData.postValue(getCurrentPlayStatus().copy(progress = progress))
                     }
 
                     override fun onStop() {
