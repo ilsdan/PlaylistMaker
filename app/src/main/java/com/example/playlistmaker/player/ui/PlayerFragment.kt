@@ -25,7 +25,6 @@ class PlayerFragment : Fragment() {
 
     private val viewModel:  PlayerViewModel by viewModel()
 
-    private var like = false
     private var inCollection = false
 
     private fun startPlayer() {
@@ -79,8 +78,16 @@ class PlayerFragment : Fragment() {
                     binding.playPauseButton.isVisible = true
                     binding.currentTrackTime.text = "0:00"
                     binding.playPauseButton.setImageDrawable(requireContext().getDrawable(R.drawable.play_button))
+                    binding.likeButton.isActivated = true
+                    if (screenState.trackModel.isFavorite) {
+                        binding.likeButton.setImageDrawable(requireContext().getDrawable(R.drawable.like_fill_track_button))
+                    } else {
+                        binding.likeButton.setImageDrawable(requireContext().getDrawable(R.drawable.like_track_button))
+                    }
                 }
                 is PlayerScreenState.Loading -> {
+                    binding.likeButton.isActivated = false
+                    binding.progressBar.isVisible = true
                 }
             }
         }
@@ -88,6 +95,14 @@ class PlayerFragment : Fragment() {
         viewModel.getPlayStatusLiveData().observe(viewLifecycleOwner) { playStatus ->
             changeButtonStyle(playStatus)
             binding.currentTrackTime.text = SimpleDateFormat("m:ss", Locale.getDefault()).format(playStatus.progress)
+        }
+
+        viewModel.getFavoriteStatusLiveData().observe(viewLifecycleOwner) {
+            if (it) {
+                binding.likeButton.setImageDrawable(requireContext().getDrawable(R.drawable.like_fill_track_button))
+            } else {
+                binding.likeButton.setImageDrawable(requireContext().getDrawable(R.drawable.like_track_button))
+            }
         }
 
         binding.playPauseButton.setOnClickListener {
@@ -108,16 +123,7 @@ class PlayerFragment : Fragment() {
         }
 
         binding.likeButton.setOnClickListener {
-            like = !like
-            when {
-                like -> {
-                    binding.likeButton.setImageDrawable(requireContext().getDrawable(R.drawable.like_fill_track_button))
-                }
-
-                else -> {
-                    binding.likeButton.setImageDrawable(requireContext().getDrawable(R.drawable.like_track_button))
-                }
-            }
+            viewModel.toggleFavorite()
         }
     }
 
