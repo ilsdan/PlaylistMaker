@@ -4,6 +4,7 @@ import android.content.Context
 import android.media.MediaPlayer
 import androidx.room.Room
 import com.example.playlistmaker.library.data.db.AppDatabase
+import com.example.playlistmaker.library.data.db.dao.TrackDao
 import com.example.playlistmaker.search.data.LocalStorage
 import com.example.playlistmaker.search.data.network.NetworkClient
 import com.example.playlistmaker.search.data.network.RetrofitNetworkClient
@@ -54,6 +55,10 @@ val dataModule = module {
     single {
         Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
             .build()
+    }
+
+    single<TrackDao> {
+        get<AppDatabase>().trackDao()
     }
 
 }

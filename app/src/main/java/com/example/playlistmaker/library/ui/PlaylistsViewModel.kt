@@ -5,13 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.library.domain.db.FavoriteInteractor
-import com.example.playlistmaker.search.domain.api.TracksInteractor
-import com.example.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.launch
 
 class PlaylistsViewModel(
-    private val favoriteInteractor: FavoriteInteractor,
-    private val tracksInteractor: TracksInteractor
+    private val favoriteInteractor: FavoriteInteractor
 ) : ViewModel() {
 
     private val stateLiveData = MutableLiveData<FavoriteScreenState>()
@@ -31,9 +28,5 @@ class PlaylistsViewModel(
                     renderState(FavoriteScreenState.Content(tracks))
             }
         }
-    }
-
-    fun setCurrentTrack(track: Track) {
-        tracksInteractor.currentTrack = track
     }
 }

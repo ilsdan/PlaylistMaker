@@ -8,12 +8,10 @@ import com.example.playlistmaker.library.domain.db.FavoriteInteractor
 import com.example.playlistmaker.player.domain.TrackPlayer
 import com.example.playlistmaker.player.domain.PlayStatus
 import com.example.playlistmaker.player.domain.PlayerScreenState
-import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.launch
 
 class PlayerViewModel(
-    private val tracksInteractor: TracksInteractor,
     private val favoriteInteractor: FavoriteInteractor,
     private val trackPlayer: TrackPlayer
 ) : ViewModel() {
@@ -29,17 +27,19 @@ class PlayerViewModel(
         return playStatusLiveData.value ?: PlayStatus(progress = 0f, isPlaying = false)
     }
 
+    lateinit var track: Track
+
     fun toggleFavorite() {
         viewModelScope.launch {
-            favoriteInteractor.isTrackFavorite(tracksInteractor.currentTrack!!.trackId).collect { isFavorite ->
-                tracksInteractor.currentTrack!!.isFavorite = !isFavorite
+            favoriteInteractor.isTrackFavorite(track.trackId).collect { isFavorite ->
+                track.isFavorite = !isFavorite
                 if (!isFavorite) {
-                    addToFavorite(tracksInteractor.currentTrack!!)
+                    addToFavorite(track)
                 } else {
-                    removeFromFavorite(tracksInteractor.currentTrack!!)
+                    removeFromFavorite(track)
                 }
                 favoriteStatusLiveData.postValue(
-                    tracksInteractor.currentTrack!!.isFavorite
+                    track.isFavorite
                 )
             }
         }
@@ -47,9 +47,9 @@ class PlayerViewModel(
 
     fun isTrackFavorite() {
         viewModelScope.launch {
-            favoriteInteractor.isTrackFavorite(tracksInteractor.currentTrack!!.trackId).collect { isFavorite ->
+            favoriteInteractor.isTrackFavorite(track.trackId).collect { isFavorite ->
                 if (isFavorite) {
-                    tracksInteractor.currentTrack!!.isFavorite = true
+                    track.isFavorite = true
                     favoriteStatusLiveData.postValue(true)
                 }
             }
@@ -77,38 +77,39 @@ class PlayerViewModel(
         trackPlayer.release()
     }
 
-    init {
-        if (tracksInteractor.currentTrack != null) {
-            isTrackFavorite()
-            screenStateLiveData.postValue(
-                PlayerScreenState.Loading
-            )
-            trackPlayer.prepare(
-                trackURL = tracksInteractor.currentTrack!!.previewUrl.toString(),
-                statusObserver = object : TrackPlayer.StatusObserver {
-                    override fun onPrepared() {
-                        screenStateLiveData.postValue(
-                            PlayerScreenState.Content(tracksInteractor.currentTrack!!)
-                        )
-                    }
+    fun initPlayer(_track: Track){
 
-                    override fun onCompletion() {
-                        playStatusLiveData.value = PlayStatus(progress = 0f, isPlaying = false)
-                    }
+        track = _track
 
-                    override fun onProgress(progress: Float) {
-                        playStatusLiveData.postValue(getCurrentPlayStatus().copy(progress = progress))
-                    }
+        isTrackFavorite()
+        screenStateLiveData.postValue(
+            PlayerScreenState.Loading
+        )
+        trackPlayer.prepare(
+            trackURL = track.previewUrl.toString(),
+            statusObserver = object : TrackPlayer.StatusObserver {
+                override fun onPrepared() {
+                    screenStateLiveData.postValue(
+                        PlayerScreenState.Content(track)
+                    )
+                }
 
-                    override fun onStop() {
-                        playStatusLiveData.value = getCurrentPlayStatus().copy(isPlaying = false)
-                    }
+                override fun onCompletion() {
+                    playStatusLiveData.value = PlayStatus(progress = 0f, isPlaying = false)
+                }
 
-                    override fun onPlay() {
-                        playStatusLiveData.value = getCurrentPlayStatus().copy(isPlaying = true)
-                    }
-                },
-            )
-        }
+                override fun onProgress(progress: Float) {
+                    playStatusLiveData.postValue(getCurrentPlayStatus().copy(progress = progress))
+                }
+
+                override fun onStop() {
+                    playStatusLiveData.value = getCurrentPlayStatus().copy(isPlaying = false)
+                }
+
+                override fun onPlay() {
+                    playStatusLiveData.value = getCurrentPlayStatus().copy(isPlaying = true)
+                }
+            },
+        )
     }
 }

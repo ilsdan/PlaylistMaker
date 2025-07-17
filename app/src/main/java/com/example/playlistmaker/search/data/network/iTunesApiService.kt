@@ -9,6 +9,6 @@ interface iTunesApiService {
     @GET("search")
     suspend fun searchTracks(
         @Query("term") term: String,
-        @Query("results") entity: String = "song"
+        @Query("entity") entity: String = "song"
     ): TracksSearchResponse
 }

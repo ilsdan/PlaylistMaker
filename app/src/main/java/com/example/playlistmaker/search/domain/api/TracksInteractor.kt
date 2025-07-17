@@ -5,8 +5,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface TracksInteractor {
 
-    var currentTrack: Track?
-
     fun searchTracks(expression: String): Flow<Pair<List<Track>?, String?>>
     fun getTracksHistory(): List<Track>
     fun addTrackToHistory(track: Track)

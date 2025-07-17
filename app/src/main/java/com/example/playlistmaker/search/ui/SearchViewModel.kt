@@ -39,7 +39,6 @@ class SearchViewModel(private val tracksInteractor: TracksInteractor) : ViewMode
     }
 
     fun addTrackToHistory(track: Track) {
-        tracksInteractor.currentTrack = track
         tracksInteractor.addTrackToHistory(track)
     }
 

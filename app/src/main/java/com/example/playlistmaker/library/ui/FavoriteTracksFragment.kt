@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentFavoriteTracksBinding
+import com.example.playlistmaker.player.ui.PlayerFragment
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.ui.OnItemClickListener
 import com.example.playlistmaker.search.ui.TrackAdapter
@@ -24,7 +25,8 @@ class FavoriteTracksFragment : Fragment() {
     private var _binding: FragmentFavoriteTracksBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var trackAdapter: TrackAdapter
+    private var _trackAdapter: TrackAdapter? = null
+    private val trackAdapter get() = _trackAdapter!!
 
     private lateinit var onTrackClickDebounce: (Track) -> Unit
 
@@ -34,7 +36,7 @@ class FavoriteTracksFragment : Fragment() {
                 onTrackClickDebounce(item)
             }
         }
-        trackAdapter = TrackAdapter(onItemClickListener)
+        _trackAdapter = TrackAdapter(onItemClickListener)
         binding.tracksList.adapter = trackAdapter
     }
 
@@ -43,16 +45,16 @@ class FavoriteTracksFragment : Fragment() {
         return binding.root
     }
 
-    private fun openPlayer() {
-        findNavController().navigate(R.id.playerFragment)
+    private fun openPlayer(track: Track) {
+        findNavController().navigate(R.id.playerFragment,
+            PlayerFragment.createArgs(track))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         onTrackClickDebounce = debounce<Track>(CLICK_DEBOUNCE_DELAY, viewLifecycleOwner.lifecycleScope, false) { track ->
-            viewModel.setCurrentTrack(track)
-            openPlayer()
+            openPlayer(track)
         }
 
         trackListViewCreate()
@@ -96,6 +98,7 @@ class FavoriteTracksFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        _trackAdapter = null
     }
 
     companion object {
