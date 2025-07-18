@@ -22,7 +22,8 @@ class TracksRepositoryImpl(private val networkClient: NetworkClient, private val
             200 -> {
                 val data = (response as TracksSearchResponse).results.map {
                     Track(
-                        it.trackId,
+                        it.trackId.toLong(),
+                        false,
                         it.trackName,
                         it.artistName,
                         it.trackTime,

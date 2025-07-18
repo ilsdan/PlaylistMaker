@@ -11,8 +11,6 @@ import java.util.concurrent.Executors
 class TracksInteractorImpl(private val repository: TracksRepository
 ) : TracksInteractor {
 
-    override var currentTrack: Track? = null
-
     override fun searchTracks(expression: String): Flow<Pair<List<Track>?, String?>> {
         return repository.searchTracks(expression).map { result ->
             when(result) {

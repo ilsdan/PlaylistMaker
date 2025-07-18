@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
+import com.example.playlistmaker.player.ui.PlayerFragment
 import com.example.playlistmaker.search.domain.SearchScreenState
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.utils.debounce
@@ -88,8 +89,9 @@ class SearchFragment : Fragment() {
         binding.tracksList.adapter = trackAdapter
     }
 
-    private fun openPlayer() {
-        findNavController().navigate(R.id.action_searchFragment_to_playerFragment)
+    private fun openPlayer(track: Track) {
+        findNavController().navigate(R.id.action_searchFragment_to_playerFragment,
+            PlayerFragment.createArgs(track))
     }
 
     private fun errorViewCreate() {
@@ -192,7 +194,7 @@ class SearchFragment : Fragment() {
 
         onTrackClickDebounce = debounce<Track>(CLICK_DEBOUNCE_DELAY, viewLifecycleOwner.lifecycleScope, false) { track ->
             viewModel.addTrackToHistory(track)
-            openPlayer()
+            openPlayer(track)
         }
 
         searchEditTextCreate()

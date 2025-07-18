@@ -1,6 +1,7 @@
 package com.example.playlistmaker.di
 
-import androidx.lifecycle.ViewModelProvider
+import com.example.playlistmaker.library.domain.db.FavoriteInteractor
+import com.example.playlistmaker.library.domain.impl.FavoriteInteractorImpl
 import com.example.playlistmaker.player.data.TrackPlayerImpl
 import com.example.playlistmaker.player.domain.TrackPlayer
 import com.example.playlistmaker.search.domain.api.TracksInteractor
@@ -30,4 +31,7 @@ val interactorModule = module {
         SettingsInteractorImpl(get())
     }
 
+    factory<FavoriteInteractor> {
+        FavoriteInteractorImpl(get())
+    }
 }
