@@ -3,14 +3,17 @@ package com.example.playlistmaker.di
 import android.content.Context
 import android.media.MediaPlayer
 import androidx.room.Room
-import com.example.playlistmaker.library.data.db.AppDatabase
-import com.example.playlistmaker.library.data.db.dao.TrackDao
+import com.example.playlistmaker.playlists.data.ImageLocalStorage
+import com.example.playlistmaker.utils.AppDatabase
+import com.example.playlistmaker.tracks.data.db.dao.TrackDao
+import com.example.playlistmaker.playlists.data.db.dao.PlaylistDao
 import com.example.playlistmaker.search.data.LocalStorage
 import com.example.playlistmaker.search.data.network.NetworkClient
 import com.example.playlistmaker.search.data.network.RetrofitNetworkClient
 import com.example.playlistmaker.search.data.network.iTunesApiService
 import com.example.playlistmaker.settings.data.LocalSettingsStorage
 import com.example.playlistmaker.sharing.data.ExternalNavigator
+import com.example.playlistmaker.tracks.data.db.dao.TrackPlaylistsDao
 import com.google.gson.Gson
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
@@ -57,8 +60,20 @@ val dataModule = module {
             .build()
     }
 
-    single<TrackDao> {
+    factory<TrackDao> {
         get<AppDatabase>().trackDao()
+    }
+
+    factory<PlaylistDao> {
+        get<AppDatabase>().playlistDao()
+    }
+
+    factory<TrackPlaylistsDao> {
+        get<AppDatabase>().trackPlaylistsDao()
+    }
+
+    factory<ImageLocalStorage> {
+        ImageLocalStorage(androidContext())
     }
 
 }

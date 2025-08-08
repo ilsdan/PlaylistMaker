@@ -16,7 +16,9 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.player.ui.PlayerFragment
 import com.example.playlistmaker.search.domain.SearchScreenState
-import com.example.playlistmaker.search.domain.models.Track
+import com.example.playlistmaker.tracks.domian.models.Track
+import com.example.playlistmaker.tracks.ui.OnItemClickListener
+import com.example.playlistmaker.tracks.ui.TrackAdapter
 import com.example.playlistmaker.utils.debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.getValue
