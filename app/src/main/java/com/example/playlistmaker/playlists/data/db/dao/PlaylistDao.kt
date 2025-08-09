@@ -15,7 +15,6 @@ interface PlaylistDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPlaylists(playlistsEntity: List<PlaylistEntity>)
 
-    //"SELECT playlists.id, playlists.name, playlists.description, playlists.cover, COUNT(*) count  FROM playlists INNER JOIN track_playlists ON playlists.id=track_playlists.playlist_id"
     @Query("SELECT * FROM playlists")
     suspend fun getPlaylists(): List<PlaylistEntity>
 

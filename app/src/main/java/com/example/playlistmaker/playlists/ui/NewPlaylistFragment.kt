@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.navigation.fragment.findNavController
@@ -37,24 +38,17 @@ class NewPlaylistFragment : Fragment() {
 
         binding.toolbar.setNavigationIcon(requireContext().getDrawable(R.drawable.arrow_back))
         binding.toolbar.setNavigationOnClickListener {
-
-            if( imageUri == null &&
-                binding.playlistNameField.text.toString().isEmpty() &&
-                binding.playlistDescriptionField.text.toString().isEmpty()) {
-                findNavController().popBackStack()
-            } else {
-                MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("Завершить создание плейлиста?")
-                    .setMessage("Все несохраненные данные будут потеряны")
-
-                    .setNegativeButton("Отмена") { dialog, which ->
-                    }
-                    .setPositiveButton("Завершить") { dialog, which ->
-                        findNavController().popBackStack()
-                    }
-                    .show()
-            }
+            backAction()
         }
+
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    backAction()
+                }
+            }
+        )
 
         val simpleTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -62,7 +56,7 @@ class NewPlaylistFragment : Fragment() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.playlistCreate.isEnabled =
-                    binding.playlistNameField.text.toString().isNotEmpty()
+                    binding.playlistNameField.text.toString().isNotEmpty() && (binding.playlistNameField.text.toString().trim().isNotEmpty())
             }
         }
         binding.playlistNameField.addTextChangedListener(simpleTextWatcher)
@@ -83,9 +77,28 @@ class NewPlaylistFragment : Fragment() {
 
         binding.playlistCreate.setOnClickListener {
             viewModel.addPlaylist(binding.playlistNameField.text.toString(), binding.playlistDescriptionField.text.toString(), imageUri)
-            Toast.makeText(requireContext(), "Плейлист ${binding.playlistNameField.text.toString()} создан",
+            Toast.makeText(requireContext(), requireContext().getString(R.string.playlist_created, binding.playlistNameField.text.toString()),
                 Toast.LENGTH_SHORT).show()
             findNavController().popBackStack()
+        }
+    }
+
+    private fun backAction(){
+        if( imageUri == null &&
+            binding.playlistNameField.text.toString().isEmpty() &&
+            binding.playlistDescriptionField.text.toString().isEmpty()) {
+            findNavController().popBackStack()
+        } else {
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle(requireContext().getString(R.string.finish_creating_a_playlist))
+                .setMessage(requireContext().getString(R.string.all_unsaved_data_will_be_lost))
+
+                .setNegativeButton(requireContext().getString(R.string.cancel)) { dialog, which ->
+                }
+                .setPositiveButton(requireContext().getString(R.string.complete)) { dialog, which ->
+                    findNavController().popBackStack()
+                }
+                .show()
         }
     }
 

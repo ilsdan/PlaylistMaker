@@ -117,10 +117,10 @@ class PlayerFragment : Fragment() {
 
                 when (newState) {
                     STATE_HIDDEN -> {
-                        overlay.visibility = View.GONE
+                        overlay.isVisible = false
                     }
                     else -> {
-                        overlay.visibility = View.VISIBLE
+                        overlay.isVisible = true
                     }
                 }
             }

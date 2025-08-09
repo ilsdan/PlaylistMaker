@@ -18,11 +18,7 @@ class PlaylistViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
     fun bind(playlist: Playlist) {
         title.text = playlist.name
 
-        when (playlist.count.toInt() % 10) {
-            1 -> description.text = "${playlist.count} трек"
-            2, 3, 4 -> description.text = "${playlist.count} трека"
-            else ->  description.text = "${playlist.count} треков"
-        }
+        description.text = itemView.context.resources.getQuantityString(R.plurals.plurals_tracks, playlist.count.toInt(), playlist.count.toInt())
 
         if (playlist.cover != null){
             val filePath = File(itemView.context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "Covers")

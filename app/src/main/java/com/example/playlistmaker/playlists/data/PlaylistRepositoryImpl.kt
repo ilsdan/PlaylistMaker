@@ -27,10 +27,6 @@ class PlaylistRepositoryImpl(
     override fun playlists(): Flow<List<Playlist>> = flow {
         val playlists = convertFromPlaylistsEntity(playlistDao.getPlaylists())
 
-
-
-        Log.i("playlist", trackPlaylistsDao.getPlaylistsTrackCount().toString())
-
         playlists.forEach { playlist ->
             trackPlaylistsDao.getPlaylistsTrackCount().forEach {
                 playlist.count
@@ -46,23 +42,25 @@ class PlaylistRepositoryImpl(
 
     override suspend fun addPlaylist(name: String, description: String?, imageUri: Uri?) {
 
+        var imageName: String? = null
+
+        if (imageUri != null){
+            imageName = "${imageUri.toString().substring(imageUri.toString().lastIndexOf('/') + 1)}.jpg"
+                imageLocalStorage.saveImageToPrivateStorage(
+                    imageUri,
+                    "Covers",
+                    imageName
+                )
+        }
+
         val playlistEntity = PlaylistEntity(
             null,
             name,
             description,
-            "${imageUri?.toString()?.substring(imageUri.toString().lastIndexOf('/') + 1)}.jpg"
+            imageName
         )
 
-        if (imageUri != null) {
-            //Log.i("fileinfo", imageUri.toString())
-            imageLocalStorage.saveImageToPrivateStorage(
-                imageUri,
-                "Covers",
-                "${imageUri?.toString()?.substring(imageUri.toString().lastIndexOf('/') + 1)}.jpg"
-            )
-        }
-
-        val playlistId = playlistDao.insertPlaylist(playlistEntity)
+        playlistDao.insertPlaylist(playlistEntity)
     }
 
     override suspend fun removePlaylist(playlist: Playlist) {
