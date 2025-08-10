@@ -1,13 +1,16 @@
 package com.example.playlistmaker.player.data
 
 import android.media.MediaPlayer
+import android.util.Log
 import com.example.playlistmaker.player.domain.TrackPlayer
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class TrackPlayerImpl(private var mediaPlayer: MediaPlayer) : TrackPlayer {
+class TrackPlayerImpl() : TrackPlayer {
+
+    private lateinit var mediaPlayer: MediaPlayer
 
     private lateinit var statusObserver: TrackPlayer.StatusObserver
 
@@ -25,6 +28,7 @@ class TrackPlayerImpl(private var mediaPlayer: MediaPlayer) : TrackPlayer {
     }
 
     override fun prepare(url: String, statusObserver: TrackPlayer.StatusObserver) {
+        mediaPlayer = MediaPlayer()
         mediaPlayer.setDataSource(url)
         mediaPlayer.prepareAsync()
         this.statusObserver = statusObserver

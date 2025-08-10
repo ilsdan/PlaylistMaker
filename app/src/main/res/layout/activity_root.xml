@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".main.ui.RootActivity">
+    tools:context=".utils.RootActivity">
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/rootFragmentContainerView"
@@ -25,7 +25,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
         android:layout_height="0.5dp"
-        android:background="@color/light_gray"/>
+        android:background="@color/YP_Light_Gray"/>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"

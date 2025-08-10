@@ -2,12 +2,16 @@ package com.example.playlistmaker.player.ui
 
 import android.icu.text.SimpleDateFormat
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -15,7 +19,15 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlayerBinding
 import com.example.playlistmaker.player.domain.PlayStatus
 import com.example.playlistmaker.player.domain.PlayerScreenState
-import com.example.playlistmaker.search.domain.models.Track
+import com.example.playlistmaker.playlists.domain.model.Playlist
+import com.example.playlistmaker.playlists.ui.OnItemClickListener
+import com.example.playlistmaker.playlists.ui.PlaylistAdapter
+import com.example.playlistmaker.playlists.ui.PlaylistScreenState
+import com.example.playlistmaker.tracks.domian.models.Track
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.Locale
 import kotlin.getValue
@@ -25,9 +37,9 @@ class PlayerFragment : Fragment() {
     private var _binding: FragmentPlayerBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel:  PlayerViewModel by viewModel()
+    private lateinit var playlistAdapter: PlaylistAdapter
 
-    private var inCollection = false
+    private val viewModel:  PlayerViewModel by viewModel()
 
     private fun startPlayer() {
         binding.playPauseButton.setImageDrawable(requireContext().getDrawable(R.drawable.pause_button))
@@ -75,6 +87,49 @@ class PlayerFragment : Fragment() {
             findNavController().popBackStack()
         }
 
+        binding.NewPlaylistButton.setOnClickListener {
+            findNavController().navigate(R.id.action_playerFragment_to_newPlaylistFragment)
+        }
+
+        playlistAdapter = PlaylistAdapter(object : OnItemClickListener {
+            override fun onItemClick(item: Playlist) {
+                viewModel.addToPlaylist(item)
+            }
+        })
+        binding.playlists.adapter = playlistAdapter
+
+        val bottomSheetContainer = binding.playlistsBottomSheet
+
+        val overlay = binding.overlay
+
+        viewModel.getPlaylistsLiveData().observe(viewLifecycleOwner) {
+            render(it)
+        }
+        viewModel.show()
+
+        val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer).apply {
+            state = STATE_HIDDEN
+        }
+
+        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+
+                when (newState) {
+                    STATE_HIDDEN -> {
+                        overlay.isVisible = false
+                    }
+                    else -> {
+                        overlay.isVisible = true
+                    }
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                binding.overlay.alpha = (slideOffset + 1)/2
+            }
+        })
+
         viewModel.getScreenStateLiveData().observe(viewLifecycleOwner) { screenState ->
             when (screenState) {
                 is PlayerScreenState.Content -> {
@@ -117,21 +172,49 @@ class PlayerFragment : Fragment() {
         }
 
         binding.collectionButton.setOnClickListener {
-            inCollection = !inCollection
-            when {
-                inCollection -> {
-                    binding.collectionButton.setImageDrawable(requireContext().getDrawable(R.drawable.add_collection_button))
-                }
-
-                else -> {
-                    binding.collectionButton.setImageDrawable(requireContext().getDrawable(R.drawable.done_collection_button))
-                }
+            bottomSheetBehavior.apply {
+                state = BottomSheetBehavior.STATE_HALF_EXPANDED
             }
         }
 
         binding.likeButton.setOnClickListener {
             viewModel.toggleFavorite()
         }
+
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.toastChannel
+                .receiveAsFlow()
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle)
+                .collect {
+                    if (!it.second) {
+                        Toast.makeText(requireContext(), "Добавлено в плейлист ${it.first.name}", Toast.LENGTH_SHORT).show()
+                        bottomSheetBehavior.state = STATE_HIDDEN
+                    } else {
+                        Toast.makeText(requireContext(), "Трек уже добавлен в плейлист ${it.first.name}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+        }
+    }
+
+    private fun render(state: PlaylistScreenState) {
+        when (state) {
+            is PlaylistScreenState.Loading -> showLoading()
+            is PlaylistScreenState.Content -> showPlaylists(state.playlist)
+            is PlaylistScreenState.Empty -> showEmpty()
+        }
+    }
+
+    private fun showLoading() {
+    }
+
+    private fun showEmpty() {
+    }
+
+    private fun showPlaylists(playlist: List<Playlist>) {
+        playlistAdapter.playlist.clear()
+        playlistAdapter.playlist.addAll(playlist)
+        playlistAdapter.notifyDataSetChanged()
     }
 
     override fun onDestroyView() {
