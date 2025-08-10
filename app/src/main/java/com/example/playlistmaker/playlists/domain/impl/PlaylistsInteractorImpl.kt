@@ -31,4 +31,8 @@ class PlaylistsInteractorImpl(
     override fun isTrackInPlaylist(track: Track, playlist: Playlist): Flow<Boolean> {
         return playlistRepository.isTrackInPlaylist(track, playlist)
     }
+
+    override fun tracksInPlaylist(playlist: Playlist): Flow<List<Track>> {
+        return playlistRepository.tracksInPlaylist(playlist)
+    }
 }

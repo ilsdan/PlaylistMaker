@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/YP_Light_Gray">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/leftBorder16"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="16dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/rightBorder16"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="16dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/leftBorder24"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="24dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/rightBorder24"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="24dp" />
+
+        <ImageView
+            android:id="@+id/playlist_cover"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+
+            android:scaleType="centerCrop"
+            android:src="@drawable/track_placeholder"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/toolbar" />
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            style="@style/ToolbarStyle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+        </androidx.appcompat.widget.Toolbar>
+
+        <TextView
+            android:id="@+id/playlist_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="48dp"
+            android:fontFamily="@font/ys_display_regular"
+            tools:text="Best songs 2021"
+            android:textFontWeight="700"
+            android:textSize="24sp"
+            android:textColor="@color/YP_Black"
+            app:layout_constraintEnd_toEndOf="@id/rightBorder24"
+            app:layout_constraintStart_toStartOf="@id/leftBorder24"
+            app:layout_constraintTop_toBottomOf="@+id/playlist_cover" />
+
+        <TextView
+            android:id="@+id/playlist_description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/ys_display_regular"
+            tools:text="2022"
+            android:textFontWeight="400"
+            android:textSize="18sp"
+            android:textColor="@color/YP_Black"
+            app:layout_constraintEnd_toEndOf="@id/rightBorder24"
+            app:layout_constraintStart_toStartOf="@id/leftBorder24"
+            app:layout_constraintTop_toBottomOf="@+id/playlist_name" />
+
+        <TextView
+            android:id="@+id/playlist_info"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/ys_display_regular"
+            tools:text="300 минут ● 98 треков"
+            android:textFontWeight="400"
+            android:textSize="18sp"
+            android:textColor="@color/YP_Black"
+            app:layout_constraintEnd_toEndOf="@id/rightBorder24"
+            app:layout_constraintStart_toStartOf="@id/leftBorder24"
+            app:layout_constraintTop_toBottomOf="@+id/playlist_description" />
+
+        <ImageButton
+            android:id="@+id/playlistButtonShare"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="19dp"
+            android:background="@drawable/share"
+
+            app:layout_constraintStart_toStartOf="@id/leftBorder24"
+            app:layout_constraintTop_toBottomOf="@+id/playlist_info" />
+
+        <ImageButton
+            android:id="@+id/playlistButtonDetails"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="43dp"
+            android:layout_marginTop="19dp"
+            android:background="@drawable/more"
+            app:layout_constraintStart_toStartOf="@+id/leftBorder24"
+            app:layout_constraintTop_toBottomOf="@+id/playlist_info" />
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View android:id="@+id/menu_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#99000000"
+        android:visibility="gone"/>
+
+
+    <LinearLayout
+
+        android:id="@+id/playlists_bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bottom_sheet_form"
+        android:backgroundTint="?attr/colorPrimary"
+        android:orientation="vertical"
+        app:behavior_hideable="true"
+        app:behavior_peekHeight="266dp"
+        android:gravity="center_horizontal"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+        <View
+            android:layout_height="4dp"
+            android:layout_width="50dp"
+            android:background="@drawable/bottom_sheet_slider"
+            android:backgroundTint="@color/YP_Light_Gray"
+            android:layout_marginTop="8dp"
+            />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/tracks_list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="24dp"
+            android:paddingHorizontal="13dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+             />
+
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

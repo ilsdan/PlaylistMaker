@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.playlists.domain.model.Playlist
 
-class PlaylistCardAdapter(): RecyclerView.Adapter<PlaylistCardViewHolder>() {
+class PlaylistCardAdapter(private val onPlaylistClickListener: OnPlaylistClickListener): RecyclerView.Adapter<PlaylistCardViewHolder>() {
 
     var playlist: MutableList<Playlist> = mutableListOf()
 
@@ -21,5 +21,6 @@ class PlaylistCardAdapter(): RecyclerView.Adapter<PlaylistCardViewHolder>() {
 
     override fun onBindViewHolder(holder: PlaylistCardViewHolder, position: Int) {
         holder.bind(playlist[position])
+        holder.itemView.setOnClickListener { onPlaylistClickListener.onItemClick(playlist[holder.adapterPosition]) }
     }
 }

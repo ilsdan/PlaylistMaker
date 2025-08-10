@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.playlistmaker.tracks.data.db.entity.PlaylistTracksCountEntity
+import com.example.playlistmaker.tracks.data.db.entity.TrackEntity
 import com.example.playlistmaker.tracks.data.db.entity.TrackPlaylistsEntity
 
 @Dao
@@ -19,5 +20,7 @@ interface TrackPlaylistsDao {
     @Query("SELECT playlist_id, COUNT(*) count FROM track_playlists GROUP BY playlist_id")
     suspend fun getPlaylistsTrackCount(): List<PlaylistTracksCountEntity>
 
+    @Query("SELECT tracks.* from tracks INNER JOIN track_playlists ON track_Playlists.track_id = tracks.id WHERE track_playlists.playlist_id = :playlistId")
+    suspend fun tracksInPlaylist(playlistId: Long): List<TrackEntity>
 
 }

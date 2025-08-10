@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlaylistsBinding
+import com.example.playlistmaker.playlist.ui.PlaylistFragment
 import com.example.playlistmaker.playlists.domain.model.Playlist
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.getValue
@@ -41,7 +42,12 @@ class PlaylistsFragment : Fragment() {
 
         viewModel.show()
 
-        _playlistCardAdapter = PlaylistCardAdapter()
+        _playlistCardAdapter = PlaylistCardAdapter(object : OnPlaylistClickListener {
+            override fun onItemClick(item: Playlist) {
+                findNavController().navigate(R.id.action_libraryFragment_to_playlistFragment,
+                    PlaylistFragment.createArgs(item))
+            }
+        })
         binding.playlistsView.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.playlistsView.adapter = playlistAdapter
 

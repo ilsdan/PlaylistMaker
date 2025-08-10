@@ -76,7 +76,16 @@ class NewPlaylistFragment : Fragment() {
         }
 
         binding.playlistCreate.setOnClickListener {
-            viewModel.addPlaylist(binding.playlistNameField.text.toString(), binding.playlistDescriptionField.text.toString(), imageUri)
+
+            var description: String?
+
+            if (binding.playlistDescriptionField.text.toString().isEmpty()) {
+                description = null
+            } else {
+                description = binding.playlistDescriptionField.text.toString()
+            }
+
+            viewModel.addPlaylist(binding.playlistNameField.text.toString(), description, imageUri)
             Toast.makeText(requireContext(), requireContext().getString(R.string.playlist_created, binding.playlistNameField.text.toString()),
                 Toast.LENGTH_SHORT).show()
             findNavController().popBackStack()
