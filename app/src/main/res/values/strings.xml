@@ -43,6 +43,7 @@
     <string name="finish_creating_a_playlist">Завершить создание плейлиста?</string>
     <string name="all_unsaved_data_will_be_lost">Все несохраненные данные будут потеряны</string>
     <string name="playlist_created">"Плейлист %s создан"</string>
+    <string name="playlist_changed">"Плейлист %s изменён"</string>
 
     <plurals name="plurals_tracks">
         <item quantity="zero">нет треков</item>
@@ -61,6 +62,18 @@
         <item quantity="many">%1$d минут</item>
         <item quantity="other">%1$d минут</item>
     </plurals>
-    <string name="no_tracks">нет треков</string>
+    <string name="no_tracks">Нет треков</string>
+    <string name="no_description">Нет описания</string>
+
+    <string name="do_you_want_to_delete_track">Хотите удалить трек?</string>
+    <string name="yes">да</string>
+    <string name="no">нет</string>
+
+    <string name="share">Поделиться</string>
+    <string name="edit_information">Редактировать информацию</string>
+    <string name="delete_playlist">Удалить плейлист</string>
+    <string name="save">Сохранить</string>
+    <string name="want_delete_playlist">Хотите удалить плейлист «%s»?</string>
+    <string name="no_tracklist_to_share_in_this_playlist">В этом плейлисте нет списка треков, которым можно поделиться</string>
 
 </resources>

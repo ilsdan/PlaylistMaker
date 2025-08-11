@@ -15,6 +15,7 @@
         app:layout_constraintTop_toTopOf="parent">
         <TextView
             style="@style/ToolbarTitleStyle"
+            android:id="@+id/toolbar_title"
             android:text="@string/new_playlist_title" />
     </androidx.appcompat.widget.Toolbar>
 

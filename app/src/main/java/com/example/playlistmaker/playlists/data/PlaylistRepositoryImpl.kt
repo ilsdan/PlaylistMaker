@@ -92,6 +92,32 @@ class PlaylistRepositoryImpl(
         emit(convertFromTrackEntity(tracks))
     }
 
+    override suspend fun removeTrackFromPlaylist(track: Track, playlist: Playlist) {
+        trackPlaylistsDao.deleteTrackFromPlaylist(track.trackId, playlist.id!!)
+    }
+
+    override suspend fun updatePlaylist(playlistId: Long, name: String, description: String?, imageUri: Uri?) {
+        var imageName: String? = null
+
+        if (imageUri != null){
+            imageName = "${imageUri.toString().substring(imageUri.toString().lastIndexOf('/') + 1)}.jpg"
+            imageLocalStorage.saveImageToPrivateStorage(
+                imageUri,
+                "Covers",
+                imageName
+            )
+        }
+
+        val playlistEntity = PlaylistEntity(
+            playlistId,
+            name,
+            description,
+            imageName
+        )
+
+        playlistDao.insertPlaylist(playlistEntity)
+    }
+
     private fun convertFromTrackEntity(tracks: List<TrackEntity>): List<Track> {
         return tracks.map { track -> trackDbConvertor.map(track) }
     }

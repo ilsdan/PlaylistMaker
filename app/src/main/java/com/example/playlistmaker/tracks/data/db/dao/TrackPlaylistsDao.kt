@@ -1,6 +1,7 @@
 package com.example.playlistmaker.tracks.data.db.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -22,5 +23,8 @@ interface TrackPlaylistsDao {
 
     @Query("SELECT tracks.* from tracks INNER JOIN track_playlists ON track_Playlists.track_id = tracks.id WHERE track_playlists.playlist_id = :playlistId")
     suspend fun tracksInPlaylist(playlistId: Long): List<TrackEntity>
+
+    @Query("DELETE FROM track_playlists WHERE track_id = :trackId AND playlist_id = :playlistId")
+    suspend fun deleteTrackFromPlaylist(trackId: Long, playlistId: Long)
 
 }
