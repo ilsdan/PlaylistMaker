@@ -46,17 +46,14 @@ class PlaylistFragment : Fragment() {
 
     private fun render(state: PlaylistScreenState) {
         when (state) {
-            is PlaylistScreenState.Loading -> showLoading()
-            is PlaylistScreenState.Content -> showTracks(state.playlist, state.tracks)
+            is PlaylistScreenState.Content -> {
+                showTracks(state.tracks)
+                showPlaylistInfo(state.playlist)
+            }
         }
     }
 
-    private fun showTracks(playlist: Playlist, tracks: List<Track>) {
-        trackAdapter.tracks.clear()
-        trackAdapter.tracks.addAll(tracks)
-        trackAdapter.notifyDataSetChanged()
-
-
+    private fun showPlaylistInfo(playlist: Playlist) {
         if (playlist.cover != null){
             val filePath = File(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "Covers")
             val file = File(filePath, playlist.cover)
@@ -71,6 +68,13 @@ class PlaylistFragment : Fragment() {
             binding.playlistDescription.text = playlist.description
         else
             binding.playlistDescription.text = requireContext().getString(R.string.no_description)
+    }
+
+    private fun showTracks(tracks: List<Track>) {
+        trackAdapter.tracks.clear()
+        trackAdapter.tracks.addAll(tracks)
+        trackAdapter.notifyDataSetChanged()
+
 
         var tracksTime: Long = 0
         tracks.forEach { track ->
@@ -87,9 +91,6 @@ class PlaylistFragment : Fragment() {
 
     }
 
-    private fun showLoading() {
-
-    }
 
     private fun openPlayer(track: Track) {
         findNavController().navigate(R.id.action_playlistFragment_to_playerFragment,
