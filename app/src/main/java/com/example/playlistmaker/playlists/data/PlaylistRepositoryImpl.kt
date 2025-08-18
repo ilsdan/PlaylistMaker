@@ -1,15 +1,15 @@
 package com.example.playlistmaker.playlists.data
 
 import android.net.Uri
-import android.util.Log
-import androidx.core.net.toFile
 import com.example.playlistmaker.playlists.data.converters.PlaylistDbConvertor
 import com.example.playlistmaker.playlists.data.db.dao.PlaylistDao
 import com.example.playlistmaker.playlists.data.db.entity.PlaylistEntity
 import com.example.playlistmaker.playlists.domain.api.PlaylistRepository
 import com.example.playlistmaker.playlists.domain.model.Playlist
-import com.example.playlistmaker.playlists.ui.PlaylistScreenState
+import com.example.playlistmaker.tracks.data.converters.TrackDbConvertor
+import com.example.playlistmaker.tracks.data.db.dao.TrackDao
 import com.example.playlistmaker.tracks.data.db.dao.TrackPlaylistsDao
+import com.example.playlistmaker.tracks.data.db.entity.TrackEntity
 import com.example.playlistmaker.tracks.data.db.entity.TrackPlaylistsEntity
 import com.example.playlistmaker.tracks.domian.models.Track
 import kotlinx.coroutines.flow.Flow
@@ -19,7 +19,9 @@ import kotlinx.coroutines.flow.flow
 class PlaylistRepositoryImpl(
     private val playlistDao: PlaylistDao,
     private val trackPlaylistsDao: TrackPlaylistsDao,
-    private val imageLocalStorage: ImageLocalStorage
+    private val imageLocalStorage: ImageLocalStorage,
+    private val trackDao: TrackDao,
+    private val trackDbConvertor: TrackDbConvertor
 ): PlaylistRepository {
 
     private val playlistDbConvertor: PlaylistDbConvertor = PlaylistDbConvertor()
@@ -68,6 +70,7 @@ class PlaylistRepositoryImpl(
     }
 
     override suspend fun addTrackToPlaylist(playlist: Playlist, track: Track) {
+        trackDao.insertTrack(trackDbConvertor.map(track))
         trackPlaylistsDao.insertTrackPlaylists(TrackPlaylistsEntity(null, track.trackId, playlist.id!!))
     }
 
@@ -81,6 +84,42 @@ class PlaylistRepositoryImpl(
         }
 
         emit(inPlaylist)
+    }
+
+    override fun tracksInPlaylist(playlist: Playlist): Flow<List<Track>> = flow {
+        val tracks = trackPlaylistsDao.tracksInPlaylist(playlist.id!!)
+        convertFromTrackEntity(tracks)
+        emit(convertFromTrackEntity(tracks))
+    }
+
+    override suspend fun removeTrackFromPlaylist(track: Track, playlist: Playlist) {
+        trackPlaylistsDao.deleteTrackFromPlaylist(track.trackId, playlist.id!!)
+    }
+
+    override suspend fun updatePlaylist(playlistId: Long, name: String, description: String?, imageUri: Uri?) {
+        var imageName: String? = null
+
+        if (imageUri != null){
+            imageName = "${imageUri.toString().substring(imageUri.toString().lastIndexOf('/') + 1)}.jpg"
+            imageLocalStorage.saveImageToPrivateStorage(
+                imageUri,
+                "Covers",
+                imageName
+            )
+        }
+
+        val playlistEntity = PlaylistEntity(
+            playlistId,
+            name,
+            description,
+            imageName
+        )
+
+        playlistDao.insertPlaylist(playlistEntity)
+    }
+
+    private fun convertFromTrackEntity(tracks: List<TrackEntity>): List<Track> {
+        return tracks.map { track -> trackDbConvertor.map(track) }
     }
 
     private fun convertFromPlaylistsEntity(playlistsEntity: List<PlaylistEntity>): List<Playlist> {

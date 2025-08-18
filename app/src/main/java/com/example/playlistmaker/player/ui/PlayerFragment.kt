@@ -2,7 +2,6 @@ package com.example.playlistmaker.player.ui
 
 import android.icu.text.SimpleDateFormat
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -20,7 +19,7 @@ import com.example.playlistmaker.databinding.FragmentPlayerBinding
 import com.example.playlistmaker.player.domain.PlayStatus
 import com.example.playlistmaker.player.domain.PlayerScreenState
 import com.example.playlistmaker.playlists.domain.model.Playlist
-import com.example.playlistmaker.playlists.ui.OnItemClickListener
+import com.example.playlistmaker.playlists.ui.OnPlaylistClickListener
 import com.example.playlistmaker.playlists.ui.PlaylistAdapter
 import com.example.playlistmaker.playlists.ui.PlaylistScreenState
 import com.example.playlistmaker.tracks.domian.models.Track
@@ -91,7 +90,7 @@ class PlayerFragment : Fragment() {
             findNavController().navigate(R.id.action_playerFragment_to_newPlaylistFragment)
         }
 
-        playlistAdapter = PlaylistAdapter(object : OnItemClickListener {
+        playlistAdapter = PlaylistAdapter(object : OnPlaylistClickListener {
             override fun onItemClick(item: Playlist) {
                 viewModel.addToPlaylist(item)
             }

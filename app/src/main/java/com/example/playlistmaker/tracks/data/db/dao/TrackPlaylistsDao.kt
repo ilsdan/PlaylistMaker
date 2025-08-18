@@ -1,10 +1,12 @@
 package com.example.playlistmaker.tracks.data.db.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.playlistmaker.tracks.data.db.entity.PlaylistTracksCountEntity
+import com.example.playlistmaker.tracks.data.db.entity.TrackEntity
 import com.example.playlistmaker.tracks.data.db.entity.TrackPlaylistsEntity
 
 @Dao
@@ -19,5 +21,10 @@ interface TrackPlaylistsDao {
     @Query("SELECT playlist_id, COUNT(*) count FROM track_playlists GROUP BY playlist_id")
     suspend fun getPlaylistsTrackCount(): List<PlaylistTracksCountEntity>
 
+    @Query("SELECT tracks.*, track_playlists.id track_playlists_id FROM tracks INNER JOIN track_playlists ON track_Playlists.track_id = tracks.id WHERE track_playlists.playlist_id = :playlistId ORDER BY track_playlists_id DESC")
+    suspend fun tracksInPlaylist(playlistId: Long): List<TrackEntity>
+
+    @Query("DELETE FROM track_playlists WHERE track_id = :trackId AND playlist_id = :playlistId")
+    suspend fun deleteTrackFromPlaylist(trackId: Long, playlistId: Long)
 
 }
